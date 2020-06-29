@@ -1,7 +1,7 @@
 header {
   background-color: rgb(85, 215, 224);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  /*display: grid;
+  grid-template-columns: 1fr 1fr 1fr;*/
   padding: 5px;
   box-sizing: border-box;
 }
@@ -17,4 +17,20 @@ header button {
   min-height: auto;
   min-width: auto;
   margin: 0em 0.5em 0.5em auto;
+}
+
+.new-habit {
+  background-color: rgb(247, 247, 247);
+  text-align: center;
+}
+
+.new-habit button {
+  width: 5%;
+  height: 2.25em;
+}
+
+.add-new-habit {
+  margin: 1em 0em 1em 1em;
+  padding: 5px;
+  width: 30%;
 }
