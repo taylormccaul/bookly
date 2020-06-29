@@ -39,6 +39,25 @@ class App extends Component {
     });
   }
 
+  componentDidMount() {
+    const habitsRef = firebase.database().ref('habits');
+
+    habitsRef.on('value', (snapshot) => {
+      let habits = snapshot.val();
+      let newState = [];
+      for (let habit in habits) {
+        newState.push({
+          id: habit,
+          text: habits[habit]
+        });
+      }
+
+      this.setState({
+        habits: newState
+      });
+    });
+  }
+
   render() {
     return (
       <div className="app">
