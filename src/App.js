@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import firebase from './firebase.js';
 import './App.css';
 
 class App extends Component {
@@ -6,11 +7,12 @@ class App extends Component {
     super();
     this.state = {
       userInput: "",
+      habit: '',
       habits: []
     }
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.addItem = this.addItem.bind(this);
   }
 
   handleChange(e) {
@@ -19,16 +21,21 @@ class App extends Component {
     });
   }
 
-  handleSubmit(e) {
+  addItem(e) {
     e.preventDefault();
 
-    let newHabit = {
+    const habitsRef = firebase.database().ref('habits');
+
+    const newHabit = {
       text: this.state.userInput,
       key: Date.now()
     }
 
+    habitsRef.push(newHabit);
+
     this.setState({
-      habits: [...this.state.habits, newHabit.text]
+      userInput: '',
+      habit: ''
     });
   }
 
@@ -38,7 +45,7 @@ class App extends Component {
         <header>
           <h1>Habit Tracker</h1>
         </header>
-        <form onSubmit={this.handleSubmit} className="new-habit">
+        <form onSubmit={this.addItem} className="new-habit">
           <input type="text" className="add-new-habit" placeholder="Add a new habit" value={this.state.userInput} onChange={this.handleChange} />
           <button type="submit">+</button>
         </form>
