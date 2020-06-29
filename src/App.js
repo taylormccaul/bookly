@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import firebase from './firebase.js';
 import './App.css';
+import firebase from './firebase.js';
 
 class App extends Component {
   constructor() {
@@ -27,8 +27,8 @@ class App extends Component {
     const habitsRef = firebase.database().ref('habits');
 
     const newHabit = {
-      text: this.state.userInput,
-      key: Date.now()
+      title: this.state.userInput,
+      id: Date.now()
     }
 
     habitsRef.push(newHabit);
@@ -48,8 +48,9 @@ class App extends Component {
       for (let habit in habits) {
         newState.push({
           id: habit,
-          text: habits[habit]
+          title: habits[habit]
         });
+        //console.log(habits[habit])
       }
 
       this.setState({
@@ -72,7 +73,8 @@ class App extends Component {
           <ul>
             {this.state.habits.map((habit) => {
               return (
-                <li key={habit}>{habit}</li>
+                <li key={habit.id}>{habit.title.title}</li>
+                //<li key={habit.key}>{habit.text}</li>
               )
             })}
           </ul>
