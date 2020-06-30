@@ -28,7 +28,7 @@ class App extends Component {
   handleSubmit(e) {
     e.preventDefault();
     
-    axios.get(`${API_URL}?q=${this.state.userInput}`)
+    axios.get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
     .then(data => {
       ///console.log(data.data)
       this.setState({
@@ -61,16 +61,20 @@ class App extends Component {
           <input type="text" name="search-bar" className="search-bar" placeholder="Search for a book." value={this.state.userInput} onChange={this.handleChange} />
           <button type="submit">Search</button>
         </form>
-        <ul>
+        <div className="search-results">
           {this.state.items.map((item, index) => {
             return (
-              <div>
+              <div className="search-result">
                 <img src={this.state.items[index]['volumeInfo'].imageLinks.thumbnail} alt="" />
-                <li key={index}>{this.state.items[index]['volumeInfo'].title}</li>
+                {this.state.items[index]['volumeInfo'].title.length > 40 ?
+                <p>{this.state.items[index]['volumeInfo'].title.substring(0, 40) + "..."}</p>
+                :
+                <p>{this.state.items[index]['volumeInfo'].title}</p>
+                }
               </div>
             )
           })}
-        </ul>
+        </div>
         {/*<button type="submit">+</button>*/}
       </div>
     )
