@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
+//import { makeStyles } from '@material-ui/core/styles';
+//import Button from '@material-ui/core/Button';
 //import ReactDOM from 'react-dom';
 //import firebase from './firebase.js';
 
@@ -72,6 +74,7 @@ class App extends Component {
     return (
       <div className="app">
         <form onSubmit={this.handleSubmit}>
+          <h1 className="logo">Bookly</h1>
           <input
             type="text"
             name="search-bar"
@@ -116,16 +119,18 @@ class App extends Component {
                   onClick={this.handleClick}
                   id={`result${index}`}
                 >
-                  <img src={volumeInfo.imageLinks.thumbnail} alt="" />
+                  {volumeInfo.imageLinks !== undefined ? <img src={volumeInfo.imageLinks.thumbnail} alt="" /> : <p>No image available</p>}
                   {volumeInfo.title.length > 40 ? (
-                    <div>
-                      <p>{volumeInfo.title.substring(0, 40) + "..."}</p>
-                      <p>by {volumeInfo.authors}</p>
+                    <div className="book-info">
+                      <p className="book-title">{volumeInfo.title.substring(0, 40) + "..."}</p>
+                      {volumeInfo.authors !== undefined ? <p className="book-author">by {volumeInfo.authors[0]}</p>: <p className="book-author">No author available</p>}
+                      {/*<button type="submit">View description</button>*/}
                     </div>
                   ) : (
-                    <div>
-                      <p>{volumeInfo.title}</p>
-                      <p>by {volumeInfo.authors}</p>
+                    <div className="book-info">
+                      <p className="book-title">{volumeInfo.title}</p>
+                      {volumeInfo.authors !== undefined ? <p className="book-author">by {volumeInfo.authors[0]}</p>: <p className="book-author">No author available</p>}
+                      {/*<button type="submit">View description</button>*/}
                     </div>
                   )}
                 </div>
