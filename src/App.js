@@ -41,7 +41,7 @@ class App extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
-    
+
     this.addToFavorites = this.addToFavorites.bind(this);
 
     this.goBack = this.goBack.bind(this);
@@ -63,7 +63,7 @@ class App extends Component {
         opened: false,
         searching: true
       });
-      console.log(this.state.items[0]["volumeInfo"].title);
+      //console.log(this.state.items[0]["volumeInfo"].title);
     });
   }
 
@@ -130,6 +130,14 @@ class App extends Component {
     e.preventDefault();
     try {
       await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+     /*const listRef = firebase.database().ref(`${this.state.user.uid}`);
+      const favoritesList = [];
+      listRef.push(favoritesList);
+      firebase.database().ref(listRef[favoritesList]).push("HELLO");*/
+      firebase.database().ref('users/' + this.state.user.uid).set({
+        email: this.state.email,
+        favoritesList: ["em"],
+      });
     } catch (error) {
       console.error(error);
     }
@@ -167,9 +175,9 @@ class App extends Component {
 
   addToFavorites(e) {
     e.preventDefault();
+    /*const favoritesRef = firebase.database().ref(`${this.state.user.uid}`);
 
-    const favoritesRef = firebase.database().ref('favorites');
-    console.log(this.state.items[this.state.itemIndex]['volumeInfo']);
+    console.log(this.state.items[this.state.itemIndex]['volumeInfo']);*/
     const newFavorite = {
       title: this.state.itemTitle,
       author: this.state.itemAuthor,
@@ -177,13 +185,53 @@ class App extends Component {
       id: Date.now(),
     }
 
-    favoritesRef.push(newFavorite);
+    /*favoritesRef.push(newFavorite);*/
+
+    //firebase.database().ref('/users/' + this.state.user.uid).once('value').then(function(snapshot) {
+      //console.log(snapshot.favoritesList);
+      /*const favoritesRef = firebase.database().ref(`${this.state.user.uid}`);
+      const title = this.state.itemTitle;
+      const author = this.state.itemAuthor;
+      const image = this.state.itemImage;
+      const id = Date.now();*/
+
+      /*var usersRef = firebase.database().ref('users');
+      var favoritess = usersRef.child(this.state.user.uid);
+      var favoritesRefe = favoritess.child('favoritesList');
+      var path = favoritesRefe.toString();*/
+
+      firebase.database().ref(`/users/${this.state.user.uid}/favoritesList`).push(newFavorite);
+      /*console.log(firebase.database().ref.child('/users/' + this.state.user.uid + 'favoritesList'));*//*.once('value')).then(function(snapshot) {
+        const newFavorite = {
+          title: title,
+          author: author,
+          image: image,
+          id: id,
+        }
+
+
+        //console.log(firebase.database().ref('users/' + this.state.user.uid + "/favoritesList"));
+        //favoritesRef.push(newFavorite);
+  
+        //snapshot.val().favoritesList.push(newFavorite);
+        //console.log(snapshot.val().favoritesList)//Do something with your user data located in snapshot
+      });*/
+
+      /*const newFavorite = {
+        title: this.state.itemTitle,
+        author: this.state.itemAuthor,
+        image: this.state.itemImage,
+        id: Date.now(),
+      }
+
+      favoritesRef.push(newFavorite);*/
+   // });
   }
 
   componentDidMount() {
-    const favoritesRef = firebase.database().ref('favorites');
+    //const favoritesRef = firebase.database().ref('favorites');
 
-    favoritesRef.on('value', (snapshot) => {
+    /*favoritesRef.on('value', (snapshot) => {
       let favorites = snapshot.val();
       let newState = [];
       for (let favorite in favorites) {
@@ -198,7 +246,14 @@ class App extends Component {
       this.setState({
         favorites: [...newState]
       });
-    });
+    });*/
+
+    if (this.state.user != null) {
+      firebase.database().ref('/users/' + this.state.user.uid).once('value').then(function(snapshot) {
+        let favorites = snapshot.val().favoritesList;
+        console.log(favorites);
+      });
+    }
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -240,8 +295,10 @@ class App extends Component {
             value={this.state.userInput}
             onChange={this.handleChange}
           /> 
-          <button type="submit">Search</button>
-          <button type="submit" className="login-btn" onClick={this.logout}>Log out</button>
+          <div>
+            <button type="submit" className="search-btn">Search</button>
+            <button type="submit" className="login-btn" onClick={this.logout}>Log out</button>
+          </div>
         </form>
         {this.state.opened && this.state.searching ? (
           <div className="preview">
