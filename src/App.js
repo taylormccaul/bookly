@@ -56,7 +56,6 @@ class App extends Component {
       itemDescription: description,
       opened: true
     });
-    //console.log(this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'].description);
   }
 
   goBack() {
@@ -84,8 +83,14 @@ class App extends Component {
             </div>
           </header>
           <div className="img-and-desc">
-            <img src={this.state.itemImage} alt="" />
-            <p>{this.state.itemDescription}</p>
+            <div className="img">
+              <img src={this.state.itemImage} alt="" />
+              <button type="submit">Add to currently reading</button>
+              <button type="submit">Add to favorite books</button>
+            </div>
+            <div className="desc">
+              <p>{this.state.itemDescription}</p>
+            </div>
           </div>
         </div>
         :
