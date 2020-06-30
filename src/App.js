@@ -15,7 +15,8 @@ class App extends Component {
       itemTitle: '',
       itemAuthor: '',
       itemImage: '',
-      itemDescription: ''
+      itemDescription: '',
+      opened: false
     }
 
     this.handleChange = this.handleChange.bind(this);
@@ -42,7 +43,19 @@ class App extends Component {
   }
 
   handleClick(item) {
-    console.log(this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'].description);
+    let currentTarget = this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'];
+    let title = currentTarget.title;
+    let author = currentTarget.author;
+    let description = currentTarget.description;
+
+    this.setState({
+      itemTitle: title,
+      itemAuthor: author,
+      itemImage: currentTarget.imageLinks.thumbnail,
+      itemDescription: description,
+      opened: true
+    });
+    //console.log(this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'].description);
   }
 
   render() {
@@ -52,6 +65,23 @@ class App extends Component {
           <input type="text" name="search-bar" className="search-bar" placeholder="Search for a book." value={this.state.userInput} onChange={this.handleChange} />
           <button type="submit">Search</button>
         </form>
+        {this.state.opened ?
+        <div className="preview">
+          <header>
+            <div className="info">
+              <h2>{this.state.itemTitle}</h2>
+              <h3>{this.state.itemAuthor}</h3>
+            </div>
+            <div className="back">
+              <button className="back-button">Go Back</button>
+            </div>
+          </header>
+          <div className="img-and-desc">
+            <img src={this.state.itemImage} alt="" />
+            <p>{this.state.itemDescription}</p>
+          </div>
+        </div>
+        :
         <div className="search-results">
           {this.state.items.map((item, index) => {
             let volumeInfo = this.state.items[index]['volumeInfo'];
@@ -67,6 +97,7 @@ class App extends Component {
             )
           })}
         </div>
+        }
         {/*<button type="submit">+</button>*/}
       </div>
     )
