@@ -27,6 +27,7 @@ class App extends Component {
       itemDescription: "",
       itemIndex: "",
       opened: false,
+      searching: false,
       favorites: []
     };
 
@@ -35,6 +36,7 @@ class App extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.addToFavorites = this.addToFavorites.bind(this);
     this.goBack = this.goBack.bind(this);
+    this.goHome = this.goHome.bind(this);
   }
 
   handleSubmit(e) {
@@ -45,6 +47,7 @@ class App extends Component {
       this.setState({
         items: [...data.data.items],
         opened: false,
+        searching: true
       });
       console.log(this.state.items[0]["volumeInfo"].title);
     });
@@ -81,6 +84,14 @@ class App extends Component {
     });
   }
 
+  goHome() {
+    this.setState({
+      opened: false,
+      searching: false,
+      userInput: '',
+    });
+  }
+
   addToFavorites(e) {
     e.preventDefault();
 
@@ -108,9 +119,11 @@ class App extends Component {
           id: favorites[favorite],
         });
       }
+      
+      //console.log(newState);
 
       this.setState({
-        favorites: newState
+        favorites: [...newState]
       });
     });
   }
@@ -127,7 +140,7 @@ class App extends Component {
           </Switch>
         </Router>*/}
         <form onSubmit={this.handleSubmit}>
-          <Logo />
+          <h1 className="logo" onClick={this.goHome}>Bookly</h1>
           <input
             type="text"
             name="search-bar"
@@ -135,10 +148,10 @@ class App extends Component {
             placeholder="Search for a book."
             value={this.state.userInput}
             onChange={this.handleChange}
-          />
+          /> 
           <button type="submit">Search</button>
         </form>
-        {this.state.opened ? (
+        {this.state.opened && this.state.searching ? (
           <div className="preview">
             <header>
               <div className="info">
@@ -162,7 +175,7 @@ class App extends Component {
               </div>
             </div>
           </div>
-        ) : (
+        ) : this.state.searching && !this.state.opened ? (
           <div className="search-results">
             {this.state.items.map((item, index) => {
               let volumeInfo = this.state.items[index]["volumeInfo"];
@@ -190,7 +203,18 @@ class App extends Component {
               );
             })}
           </div>
-        )}
+        ) 
+        : 
+        <div className="favorites">
+          <ul>
+            {this.state.favorites.map((item, index) => {
+              return (
+                <li key={index}>{this.state.favorites[index].id.title}</li>
+              )
+            })}
+          </ul>
+        </div>
+        }
         {/*<button type="submit">+</button>*/}
       </div>
     );
