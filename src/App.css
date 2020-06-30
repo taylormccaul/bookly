@@ -1,8 +1,46 @@
-header {
+/*button {
+  width: 10%;
+  height: 8em;
+  font-size: 1.5em;
+  border: none;
+  border-radius: 10px;
+  background-color: rgb(250, 250, 250);
+  cursor: pointer;
+}*/
+
+form {
+  margin: 1em auto;
+  text-align: center;
+}
+
+form button {
+  width: 10%;
+  height: 2.4em;
+  font-size: 1.2em;
+  background-color: black;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.search-bar {
+  width: 50%;
+  height: 1.5em;
+  margin: 1em;
+  border-bottom: 1px solid black;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  /*background: rgb(245, 245, 245);*/
+  padding: 10px;
+  font-size: 1.2em;
+}
+
+/*header {
   background-color: rgb(85, 215, 224);
   /*display: grid;
   grid-template-columns: 1fr 1fr 1fr;*/
-  padding: 5px;
+  /*padding: 5px;
   box-sizing: border-box;
 }
 
@@ -35,9 +73,16 @@ header button {
   width: 30%;
 }
 
+ul {
+  background-color: red;
+  text-align: center;
+}
+
 li {
   list-style-type: none;
   background-color: rgb(247, 247, 247);
   padding: 5px;
   width: 30%;
-}
+  margin-left: auto;
+  margin-right: auto;
+}*/
