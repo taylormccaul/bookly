@@ -37,7 +37,8 @@ class App extends Component {
     axios.get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
     .then(data => {
       this.setState({
-        items: [...data.data.items]
+        items: [...data.data.items],
+        opened: false
       });
       console.log(this.state.items[0]['volumeInfo'].title)
     });
