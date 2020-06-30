@@ -12,6 +12,7 @@ import Logo from './components/Logo';
 //import Button from '@material-ui/core/Button';
 //import ReactDOM from 'react-dom';
 import firebase from './firebase.js';
+import { auth } from './firebase.js';
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
 
@@ -21,22 +22,35 @@ class App extends Component {
     this.state = {
       userInput: '',
       items: [],
-      itemTitle: "",
-      itemAuthor: "",
-      itemImage: "",
-      itemDescription: "",
-      itemIndex: "",
+      itemTitle: '',
+      itemAuthor: '',
+      itemImage: '',
+      itemDescription: '',
+      itemIndex: '',
       opened: false,
       searching: false,
-      favorites: []
+      favorites: [],
+      email: '',
+      password: '',
+      loggedIn: false,
+      user: null
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleEmail = this.handleEmail.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
+    
     this.addToFavorites = this.addToFavorites.bind(this);
+
     this.goBack = this.goBack.bind(this);
     this.goHome = this.goHome.bind(this);
+
+    this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
+    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+
+    this.logout = this.logout.bind(this);
   }
 
   handleSubmit(e) {
@@ -92,6 +106,65 @@ class App extends Component {
     });
   }
 
+  handleEmail(e) {
+    this.setState({
+      email: e.target.value
+    });
+
+    //console.log(this.state.email);
+  }
+
+  handlePassword(e) {
+    this.setState({
+      password: e.target.value
+    });
+
+    //console.log(this.state.password);
+  }
+
+  /*signup(email, password) {
+    return firebase.auth().createUserWithEmailAndPassword(email, password);
+  }*/
+
+  async handleSignupSubmit(e) {
+    e.preventDefault();
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+    } catch (error) {
+      console.error(error);
+    }
+
+    this.setState({
+      email: '',
+      password: '',
+      loggedIn: true
+    });
+  }
+
+  handleLoginSubmit(e) {
+    e.preventDefault();
+    /*try {
+      await */firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((result) => {
+        console.log(result.user.email);
+      })
+    //} catch (error) {
+    //  console.error(error);
+    //}
+
+    this.setState({
+      email: '',
+      password: '',
+      loggedIn: true
+    });
+  }
+
+  logout() {
+    firebase.auth().signOut();
+    this.setState({
+      loggedIn: false
+    });
+  }
+
   addToFavorites(e) {
     e.preventDefault();
 
@@ -126,20 +199,38 @@ class App extends Component {
         favorites: [...newState]
       });
     });
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({
+          user: user,
+          loggedIn: true
+        });
+      }
+    });
   }
 
   render() {
     return (
-      <div className="app">
-        {/*<Router>
+      <div>
+        {!this.state.loggedIn ? 
+          <form className="login-form">
+            <input type="email" className="email-form" onChange={this.handleEmail} />
+            <input type="password" className="password-form" onChange={this.handlePassword} />
+            <button type="submit" className="signup-btn" onClick={this.handleSignupSubmit}>Sign up</button>
+            <button type="submit" className="login-btn" onClick={this.handleLoginSubmit}>Log in</button>
+          </form>
+          :
+          <div className="app">
+          {/*<Router>
           <Link to="/home">Home</Link>
           <Switch>
             <Route path="/home">
               <Home userInput={this.state.userInput} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
             </Route>
           </Switch>
-        </Router>*/}
-        <form onSubmit={this.handleSubmit}>
+          </Router>*/}
+        <form onSubmit={this.handleSubmit} className="search-form">
           <h1 className="logo" onClick={this.goHome}>Bookly</h1>
           <input
             type="text"
@@ -150,6 +241,7 @@ class App extends Component {
             onChange={this.handleChange}
           /> 
           <button type="submit">Search</button>
+          <button type="submit" className="login-btn" onClick={this.logout}>Log out</button>
         </form>
         {this.state.opened && this.state.searching ? (
           <div className="preview">
@@ -205,17 +297,22 @@ class App extends Component {
           </div>
         ) 
         : 
-        <div className="favorites">
-          <ul>
+        <div>
+          <div className="favorites">
             {this.state.favorites.map((item, index) => {
               return (
-                <li key={index}>{this.state.favorites[index].id.title}</li>
+                <div className="favorite-items">
+                  <img src={this.state.favorites[index].id.image} alt="" />
+                  <p>{this.state.favorites[index].id.title}</p>
+                </div>
               )
             })}
-          </ul>
+          </div>
         </div>
         }
         {/*<button type="submit">+</button>*/}
+        </div>
+        }
       </div>
     );
   }
