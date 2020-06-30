@@ -12,7 +12,7 @@ class App extends Component {
     this.state = {
       userInput: '',
       isLoaded: false,
-      items: {}
+      items: []
     }
 
     this.handleChange = this.handleChange.bind(this);
@@ -32,9 +32,9 @@ class App extends Component {
     .then(data => {
       ///console.log(data.data)
       this.setState({
-        items: {...data.data.items}
+        items: [...data.data.items]
       });
-      //console.log(this.state.items[0]['volumeInfo'])
+      console.log(this.state.items[0]['volumeInfo'].title)
     });
 
     //console.log(this.state.items[0].volumeInfo.title)
@@ -61,6 +61,13 @@ class App extends Component {
           <input type="text" name="search-bar" className="search-bar" placeholder="Search for a book." value={this.state.userInput} onChange={this.handleChange} />
           <button type="submit">Search</button>
         </form>
+        <ul>
+          {this.state.items.map((item, index) => {
+            return (
+              <li key={index}>{this.state.items[index]['volumeInfo'].title}</li>
+            )
+          })}
+        </ul>
         {/*<button type="submit">+</button>*/}
       </div>
     )
