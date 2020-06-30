@@ -8,6 +8,25 @@
   cursor: pointer;
 }*/
 
+.search-results {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(200px, 1fr));
+  margin: 1em;
+  grid-gap: 1em;
+}
+
+img {
+  width: auto;
+}
+
+.search-result {
+  text-decoration: none;
+  list-style-type: none;
+  text-align: center;
+  border: 1px solid rgb(236, 236, 236);
+  padding-top: 1em;
+}
+
 form {
   margin: 1em auto;
   text-align: center;
