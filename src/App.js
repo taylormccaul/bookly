@@ -64,7 +64,10 @@ class App extends Component {
         <ul>
           {this.state.items.map((item, index) => {
             return (
-              <li key={index}>{this.state.items[index]['volumeInfo'].title}</li>
+              <div>
+                <img src={this.state.items[index]['volumeInfo'].imageLinks.thumbnail} alt="" />
+                <li key={index}>{this.state.items[index]['volumeInfo'].title}</li>
+              </div>
             )
           })}
         </ul>
