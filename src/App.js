@@ -22,6 +22,7 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.goBack = this.goBack.bind(this);
   }
 
   handleChange(e) {
@@ -42,8 +43,8 @@ class App extends Component {
     });
   }
 
-  handleClick(item) {
-    let currentTarget = this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'];
+  handleClick(e) {
+    let currentTarget = this.state.items[e.currentTarget.id.substring(6, 7)]['volumeInfo'];
     let title = currentTarget.title;
     let author = currentTarget.author;
     let description = currentTarget.description;
@@ -56,6 +57,12 @@ class App extends Component {
       opened: true
     });
     //console.log(this.state.items[item.currentTarget.id.substring(6, 7)]['volumeInfo'].description);
+  }
+
+  goBack() {
+    this.setState({
+      opened: false
+    });
   }
 
   render() {
@@ -73,7 +80,7 @@ class App extends Component {
               <h3>{this.state.itemAuthor}</h3>
             </div>
             <div className="back">
-              <button className="back-button">Go Back</button>
+              <button className="back-button" onClick={this.goBack}>Go Back</button>
             </div>
           </header>
           <div className="img-and-desc">
