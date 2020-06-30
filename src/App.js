@@ -1,30 +1,53 @@
 import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
+import Logo from './components/Logo';
+/*import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";*/
 //import { makeStyles } from '@material-ui/core/styles';
 //import Button from '@material-ui/core/Button';
 //import ReactDOM from 'react-dom';
-//import firebase from './firebase.js';
+import firebase from './firebase.js';
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      userInput: "",
+      userInput: '',
       items: [],
       itemTitle: "",
       itemAuthor: "",
       itemImage: "",
       itemDescription: "",
+      itemIndex: "",
       opened: false,
+      favorites: []
     };
 
-    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.addToFavorites = this.addToFavorites.bind(this);
     this.goBack = this.goBack.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    
+    axios.get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
+    .then((data) => {
+      this.setState({
+        items: [...data.data.items],
+        opened: false,
+      });
+      console.log(this.state.items[0]["volumeInfo"].title);
+    });
   }
 
   handleChange(e) {
@@ -33,26 +56,13 @@ class App extends Component {
     });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-
-    axios
-      .get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
-      .then((data) => {
-        this.setState({
-          items: [...data.data.items],
-          opened: false,
-        });
-        console.log(this.state.items[0]["volumeInfo"].title);
-      });
-  }
-
   handleClick(e) {
     let currentTarget = this.state.items[e.currentTarget.id.substring(6, 7)][
       "volumeInfo"
     ];
+
     let title = currentTarget.title;
-    let author = currentTarget.author;
+    let author = currentTarget.authors;
     let description = currentTarget.description;
 
     this.setState({
@@ -61,6 +71,7 @@ class App extends Component {
       itemImage: currentTarget.imageLinks.thumbnail,
       itemDescription: description,
       opened: true,
+      itemIndex: e.currentTarget.id.substring(6, 7)
     });
   }
 
@@ -70,11 +81,53 @@ class App extends Component {
     });
   }
 
+  addToFavorites(e) {
+    e.preventDefault();
+
+    const favoritesRef = firebase.database().ref('favorites');
+    console.log(this.state.items[this.state.itemIndex]['volumeInfo']);
+    const newFavorite = {
+      title: this.state.itemTitle,
+      author: this.state.itemAuthor,
+      image: this.state.itemImage,
+      id: Date.now(),
+    }
+
+    favoritesRef.push(newFavorite);
+  }
+
+  componentDidMount() {
+    const favoritesRef = firebase.database().ref('favorites');
+
+    favoritesRef.on('value', (snapshot) => {
+      let favorites = snapshot.val();
+      let newState = [];
+      for (let favorite in favorites) {
+        newState.push({
+          title: favorite,
+          id: favorites[favorite],
+        });
+      }
+
+      this.setState({
+        favorites: newState
+      });
+    });
+  }
+
   render() {
     return (
       <div className="app">
+        {/*<Router>
+          <Link to="/home">Home</Link>
+          <Switch>
+            <Route path="/home">
+              <Home userInput={this.state.userInput} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
+            </Route>
+          </Switch>
+        </Router>*/}
         <form onSubmit={this.handleSubmit}>
-          <h1 className="logo">Bookly</h1>
+          <Logo />
           <input
             type="text"
             name="search-bar"
@@ -102,7 +155,7 @@ class App extends Component {
               <div className="img">
                 <img src={this.state.itemImage} alt="" />
                 <button type="submit">Add to currently reading</button>
-                <button type="submit">Add to favorite books</button>
+                <button type="submit" onClick={this.addToFavorites}>Add to favorite books</button>
               </div>
               <div className="desc">
                 <p>{this.state.itemDescription}</p>
