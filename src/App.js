@@ -101,9 +101,15 @@ class App extends Component {
               <div className="search-result" onClick={this.handleClick} id={`result${index}`}>
                 <img src={volumeInfo.imageLinks.thumbnail} alt="" />
                 {volumeInfo.title.length > 40 ?
-                <p>{volumeInfo.title.substring(0, 40) + "..."}</p>
+                <div>
+                  <p>{volumeInfo.title.substring(0, 40) + "..."}</p>
+                  <p>by {volumeInfo.authors}</p>
+                </div>
                 :
-                <p>{volumeInfo.title}</p>
+                <div>
+                  <p>{volumeInfo.title}</p>
+                  <p>by {volumeInfo.authors}</p>
+                </div>
                 }
               </div>
             )
