@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 //import firebase from './firebase.js';
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
@@ -11,12 +11,18 @@ class App extends Component {
     super();
     this.state = {
       userInput: '',
-      isLoaded: false,
-      items: []
+      items: [],
+      itemTitle: '',
+      itemAuthor: '',
+      itemImage: '',
+      itemDescription: '',
+      opened: false
     }
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.goBack = this.goBack.bind(this);
   }
 
   handleChange(e) {
@@ -28,30 +34,35 @@ class App extends Component {
   handleSubmit(e) {
     e.preventDefault();
     
-    axios.get(`${API_URL}?q=${this.state.userInput}`)
+    axios.get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
     .then(data => {
-      ///console.log(data.data)
       this.setState({
-        items: [...data.data.items]
+        items: [...data.data.items],
+        opened: false
       });
       console.log(this.state.items[0]['volumeInfo'].title)
     });
+  }
 
-    //console.log(this.state.items[0].volumeInfo.title)
-    //console.log(this.state.items[0].volumeInfo.imageLinks.thumbnail)
-    /*fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.userInput}`)
-    .then(res => res.json())
-    .then(
-      (result) => {
-        this.setState({
-          userInput: '',
-          isLoaded: true,
-          items: [result.items[0], result.items[1], result.items[2]]
-        });
-      }
-    )*/
-    //console.log(this.state.items);
-    //console.log("https://www.googleapis.com/books/v1/volumes?q=")
+  handleClick(e) {
+    let currentTarget = this.state.items[e.currentTarget.id.substring(6, 7)]['volumeInfo'];
+    let title = currentTarget.title;
+    let author = currentTarget.author;
+    let description = currentTarget.description;
+
+    this.setState({
+      itemTitle: title,
+      itemAuthor: author,
+      itemImage: currentTarget.imageLinks.thumbnail,
+      itemDescription: description,
+      opened: true
+    });
+  }
+
+  goBack() {
+    this.setState({
+      opened: false
+    });
   }
 
   render() {
@@ -61,16 +72,51 @@ class App extends Component {
           <input type="text" name="search-bar" className="search-bar" placeholder="Search for a book." value={this.state.userInput} onChange={this.handleChange} />
           <button type="submit">Search</button>
         </form>
-        <ul>
+        {this.state.opened ?
+        <div className="preview">
+          <header>
+            <div className="info">
+              <h2>{this.state.itemTitle}</h2>
+              <h3>{this.state.itemAuthor}</h3>
+            </div>
+            <div className="back">
+              <button className="back-button" onClick={this.goBack}>Go Back</button>
+            </div>
+          </header>
+          <div className="img-and-desc">
+            <div className="img">
+              <img src={this.state.itemImage} alt="" />
+              <button type="submit">Add to currently reading</button>
+              <button type="submit">Add to favorite books</button>
+            </div>
+            <div className="desc">
+              <p>{this.state.itemDescription}</p>
+            </div>
+          </div>
+        </div>
+        :
+        <div className="search-results">
           {this.state.items.map((item, index) => {
+            let volumeInfo = this.state.items[index]['volumeInfo'];
             return (
-              <div>
-                <img src={this.state.items[index]['volumeInfo'].imageLinks.thumbnail} alt="" />
-                <li key={index}>{this.state.items[index]['volumeInfo'].title}</li>
+              <div className="search-result" onClick={this.handleClick} id={`result${index}`}>
+                <img src={volumeInfo.imageLinks.thumbnail} alt="" />
+                {volumeInfo.title.length > 40 ?
+                <div>
+                  <p>{volumeInfo.title.substring(0, 40) + "..."}</p>
+                  <p>by {volumeInfo.authors}</p>
+                </div>
+                :
+                <div>
+                  <p>{volumeInfo.title}</p>
+                  <p>by {volumeInfo.authors}</p>
+                </div>
+                }
               </div>
             )
           })}
-        </ul>
+        </div>
+        }
         {/*<button type="submit">+</button>*/}
       </div>
     )
@@ -78,94 +124,3 @@ class App extends Component {
 }
 
 export default App;
-
-/*class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      userInput: "",
-      habit: '',
-      habits: [],
-      date: ''
-    }
-
-    this.handleChange = this.handleChange.bind(this);
-    this.addItem = this.addItem.bind(this);
-  }
-
-  handleChange(e) {
-    this.setState({
-      userInput: e.target.value
-    });
-  }
-
-  addItem(e) {
-    e.preventDefault();
-
-    const habitsRef = firebase.database().ref('habits');;
-    let d = new Date();
-
-    let dateString = `${d.getMonth() + 1}_${d.getDate()}_${d.getFullYear()}`;
-
-    const newHabit = {
-      title: this.state.userInput,
-      id: Date.now(),
-      daysCompleted: {
-        dateString: false
-      }
-    }
-
-    habitsRef.push(newHabit);
-
-    this.setState({
-      userInput: '',
-      habit: ''
-    });
-  }
-
-  componentDidMount() {
-    const habitsRef = firebase.database().ref('habits');
-
-    habitsRef.on('value', (snapshot) => {
-      let habits = snapshot.val();
-      let newState = [];
-      for (let habit in habits) {
-        newState.push({
-          id: habit,
-          title: habits[habit]
-        });
-        //console.log(habits[habit])
-      }
-
-      this.setState({
-        habits: newState
-      });
-    });
-  }
-
-  render() {
-    return (
-      <div className="app">
-        <header>
-          <h1>Habit Tracker</h1>
-        </header>
-        <form onSubmit={this.addItem} className="new-habit">
-          <input type="text" className="add-new-habit" placeholder="Add a new habit" value={this.state.userInput} onChange={this.handleChange} />
-          <button type="submit">+</button>
-        </form>
-        <div className="habits">
-          <ul>
-            {this.state.habits.map((habit) => {
-              return (
-                <li key={habit.id}>{habit.title.title}</li>
-                //<li key={habit.key}>{habit.text}</li>
-              )
-            })}
-          </ul>
-        </div>
-      </div>
-    );
-  }
-}
-
-export default App;*/
