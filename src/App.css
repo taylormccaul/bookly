@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Yellowtail?family=Krona+One&family=Rubik:wght@500&family=Oswald&family=Raleway&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Yellowtail&family=Krona+One&family=Rubik:wght@500&family=Oswald&family=Raleway&display=swap');
 /*button {
   width: 10%;
   height: 8em;
@@ -10,8 +9,11 @@
   cursor: pointer;
 }*/
 
-h1 {
-  font-family: 'Yellowtail', Georgia, Times, serif;
+.logo {
+  font-family: 'Yellowtail', Georgia, serif;
+  font-size: 2.8em;
+  cursor: pointer;
+  margin-bottom: 0;
 }
 
 .book-title {
