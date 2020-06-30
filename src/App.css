@@ -32,15 +32,18 @@ form {
   text-align: center;
 }
 
+button {
+  background-color: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
 form button {
   min-width: auto;
   width: 10%;
   height: 2.4em;
   font-size: 1.2em;
-  background-color: black;
-  border: none;
-  color: white;
-  cursor: pointer;
 }
 
 .search-bar {
@@ -57,22 +60,45 @@ form button {
 }
 
 .preview {
-  max-width: 60%;
+  max-width: 70%;
   margin: 1em auto;
+  border: 1px solid rgb(236, 236, 236);
 }
 
 .preview header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 0em 1em;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgb(236, 236, 236);
+}
+
+.preview h2 {
+  font-size: 1.9em;
 }
 
 .img-and-desc {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  padding: 1em;
+  box-sizing: border-box;
 }
 
-.img-and-desc p {
-  grid-column: 2 / 4;
+.img-and-desc .img {
+  grid-column: 1 / 2;
+  grid-row: auto;
+  height: 20%;
+}
+
+.img-and-desc .desc {
+  grid-column: 2 / 6;
+}
+
+.img-and-desc button {
+  padding: 5px;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 .info {
@@ -87,63 +113,9 @@ form button {
 
 .back-button {
   display: block;
-  margin: 2em auto;
+  margin: 2.3em auto;
   width: 80%;
-  color: white;
-  background-color: black;
   padding: 5px;
-  border: none;
   font-size: 0.9em;
   box-sizing: border-box;
 }
-
-/*header {
-  background-color: rgb(85, 215, 224);
-  /*display: grid;
-  grid-template-columns: 1fr 1fr 1fr;*/
-  /*padding: 5px;
-  box-sizing: border-box;
-}
-
-h1 {
-  margin: 0;
-}
-
-header button {
-  grid-column: 3 / 4;
-  height: 90%;
-  width: 30%;
-  min-height: auto;
-  min-width: auto;
-  margin: 0em 0.5em 0.5em auto;
-}
-
-.new-habit {
-  background-color: rgb(247, 247, 247);
-  text-align: center;
-}
-
-.new-habit button {
-  width: 5%;
-  height: 2.25em;
-}
-
-.add-new-habit {
-  margin: 1em 0em 1em 1em;
-  padding: 5px;
-  width: 30%;
-}
-
-ul {
-  background-color: red;
-  text-align: center;
-}
-
-li {
-  list-style-type: none;
-  background-color: rgb(247, 247, 247);
-  padding: 5px;
-  width: 30%;
-  margin-left: auto;
-  margin-right: auto;
-}*/
