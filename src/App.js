@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
-import Logo from "./components/Logo";
+//import Logo from "./components/Logo";
 /*import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
 } from "react-router-dom";*/
-//import { makeStyles } from '@material-ui/core/styles';
-//import Button from '@material-ui/core/Button';
-//import ReactDOM from 'react-dom';
 import firebase from "./firebase.js";
-import { auth } from "./firebase.js";
+//import { auth } from "./firebase.js";
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
 
@@ -34,6 +31,7 @@ class App extends Component {
       password: "",
       loggedIn: false,
       user: null,
+      IDs: []
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -65,7 +63,6 @@ class App extends Component {
           opened: false,
           searching: true,
         });
-        //console.log(this.state.items[0]["volumeInfo"].title);
       });
   }
 
@@ -112,21 +109,13 @@ class App extends Component {
     this.setState({
       email: e.target.value,
     });
-
-    //console.log(this.state.email);
   }
 
   handlePassword(e) {
     this.setState({
       password: e.target.value,
     });
-
-    //console.log(this.state.password);
   }
-
-  /*signup(email, password) {
-    return firebase.auth().createUserWithEmailAndPassword(email, password);
-  }*/
 
   async handleSignupSubmit(e) {
     e.preventDefault();
@@ -142,10 +131,6 @@ class App extends Component {
             loggedIn: true,
           });
         });
-      /*const listRef = firebase.database().ref(`${this.state.user.uid}`);
-      const favoritesList = [];
-      listRef.push(favoritesList);
-      firebase.database().ref(listRef[favoritesList]).push("HELLO");*/
       firebase
         .database()
         .ref("users/" + this.state.user.uid)
@@ -160,18 +145,46 @@ class App extends Component {
 
   handleLoginSubmit(e) {
     e.preventDefault();
-    /*try {
-      await */ firebase
+    firebase
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then((result) => {
-        //console.log(result.user.email);
+        console.log(result.user.uid);
         this.setState({
           email: "",
           password: "",
           user: result.user,
           loggedIn: true,
         });
+
+        const favoritesRef = firebase.database().ref("users/" + result.user.uid + "/favoritesList");
+        /*.on("value", (snapshot) => {
+          const listOfFavorites = [];
+          listOfFavorites.push(snapshot.val());
+          const favoritesIdArray = Object.getOwnPropertyNames(listOfFavorites[0]);
+          this.setState({
+            favorites: listOfFavorites[0],
+            IDs: favoritesIdArray
+          });
+        });*/
+        favoritesRef.on("value", (snapshot) => {
+          let favoritesList = snapshot.val();
+          let newState = [];
+          for (let favorite in favoritesList) {
+            newState.push({
+              key: favorite,
+              id: favoritesList[favorite],
+            });
+          }
+    
+          //console.log(newState);
+    
+          this.setState({
+            favorites: [...newState]
+          })
+        });
+
+
       });
     //} catch (error) {
     //  console.error(error);
@@ -202,7 +215,7 @@ class App extends Component {
     favoritesRef.push(newFavorite);
   }
 
-  updateFavorites() {
+  componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({
@@ -210,8 +223,12 @@ class App extends Component {
         });
       }
     });
+  }
 
-    const favoritesRef = firebase.database().ref(`/users/${this.state.user.uid}/favoritesList`);
+  updateFavorites() {
+    const favoritesRef = firebase
+      .database()
+      .ref(`/users/${this.state.user.uid}/favoritesList`);
 
     favoritesRef.on("value", (snapshot) => {
       let favorites = snapshot.val();
@@ -228,55 +245,10 @@ class App extends Component {
       this.setState({
         favorites: [...newState],
       });
-      
+
       console.log(this.state.favorites);
     });
   }
-
-  /*componentDidMount() {
-    const favoritesRef = firebase.database().ref(`/users/`); //(`/users/${this.state.user.uid}/favoritesList`);
-
-    favoritesRef.on("value", (snapshot) => {
-      let favorites = snapshot.val();
-      let newState = [];
-      for (let favorite in favorites) {
-        newState.push({
-          key: favorite,
-          id: favorites[favorite],
-        });
-      }
-
-      //console.log(newState);
-
-      this.setState({
-        favorites: [...newState],
-      });
-    });
-
-    /*if (this.state.user != null) {
-      firebase.database().ref('/users/' + this.state.user.uid).once('value').then(function(snapshot) {
-        let favorites = snapshot.val().favoritesList;
-        console.log(favorites);
-      });
-    }*/
-
-    /*firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({
-          user: user,
-          //loggedIn: true
-        });
-      }
-    });*/
-
-    /*firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({
-          user: user,
-        });
-      }
-    });
-  }*/
 
   render() {
     return (
@@ -417,20 +389,20 @@ class App extends Component {
                 })}
               </div>
             ) : (
-              <div>
-                <div className="favorites">
-                  {this.state.favorites.map((item, index) => {
+              <div className="favorites">
+                {
+                  this.state.favorites.map((item, index) => {
                     return (
                       <div className="favorite-items" key={index}>
+                        <p>{this.state.favorites[index].id.title}</p>
                         <img
                           src={this.state.favorites[index].id.image}
                           alt=""
                         />
-                        <p>{this.state.favorites[index].id.title}</p>
+                        <p>{this.state.favorites[index].id.author[0]}</p>
                       </div>
                     );
                   })}
-                </div>
               </div>
             )}
             {/*<button type="submit">+</button>*/}
