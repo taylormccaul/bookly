@@ -41,10 +41,18 @@
   font-size: 2.8em;
   cursor: pointer;
   margin-bottom: 0;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  font-family: 'Rubik', Helvetica, sans-serif;
 }
 
 .book-title {
-  font-family: 'Rubik', Helvetica, sans-serif;
+  font-family: 'Oswald', Helvetica, sans-serif;
+  font-size: 1.3em;
+  margin: 0.2em 0.5em;
 }
 
 .book-author {
@@ -159,8 +167,14 @@ button:hover {
   border-bottom: 1px solid rgb(236, 236, 236);
 }
 
+.preview h3 {
+  margin-top: 0.1em;
+  text-align: center;
+}
+
 .preview h2 {
   font-size: 1.9em;
+  margin-bottom: 0.1em;
 }
 
 .img-and-desc {
