@@ -34,7 +34,6 @@ class App extends Component {
       loggedIn: false,
       user: null,
       IDs: [],
-      index: 0
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
