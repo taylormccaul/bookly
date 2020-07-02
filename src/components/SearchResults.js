@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-class SearchResults extends React.Component {
+export default class SearchResults extends React.Component {
   handleClick = () => {
     this.props.handleClick();
   }
@@ -46,5 +46,3 @@ class SearchResults extends React.Component {
     );
   }
 }
-
-export default SearchResults;

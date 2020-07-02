@@ -13,6 +13,12 @@ import Preview from "./components/Preview";
 import SearchResults from "./components/SearchResults";
 import FavoritesList from "./components/FavoritesList";
 
+import EmailForm from "./components/EmailForm";
+import PasswordForm from "./components/PasswordForm";
+
+import SignupButton from "./components/SignupButton";
+import LoginButton from "./components/LoginButton";
+
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
 
 class App extends Component {
@@ -120,8 +126,8 @@ class App extends Component {
     });
   }
 
-  async handleSignupSubmit(e) {
-    e.preventDefault();
+  async handleSignupSubmit() {
+    //e.preventDefault();
     try {
       await firebase
         .auth()
@@ -149,8 +155,8 @@ class App extends Component {
     }
   }
 
-  handleLoginSubmit(e) {
-    e.preventDefault();
+  handleLoginSubmit() {
+    //e.preventDefault();
     firebase
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
@@ -225,30 +231,10 @@ class App extends Component {
       <div>
         {!this.state.loggedIn ? (
           <form className="login-form">
-            <input
-              type="email"
-              className="email-form"
-              onChange={this.handleEmail}
-            />
-            <input
-              type="password"
-              className="password-form"
-              onChange={this.handlePassword}
-            />
-            <button
-              type="submit"
-              className="signup-btn"
-              onClick={this.handleSignupSubmit}
-            >
-              Sign up
-            </button>
-            <button
-              type="submit"
-              className="login-btn"
-              onClick={this.handleLoginSubmit}
-            >
-              Log in
-            </button>
+            <EmailForm handleEmail={this.handleEmail} />
+            <PasswordForm handlePassword={this.handlePassword} />
+            <SignupButton handleSignupSubmit={this.handleSignupSubmit} />
+            <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
           </form>
         ) : (
           <div className="app" onLoad={this.updateFavorites}>
@@ -278,7 +264,7 @@ class App extends Component {
                 </button>
                 <button
                   type="button"
-                  className="login-btn"
+                  className="logout-btn"
                   onClick={this.logout}
                 >
                   Log out

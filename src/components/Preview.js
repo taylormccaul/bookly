@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-class Preview extends React.Component {
+export default class Preview extends Component {
   goBack = () => {
     this.props.goBack();
   };
@@ -39,5 +39,3 @@ class Preview extends React.Component {
     );
   }
 }
-
-export default Preview;
