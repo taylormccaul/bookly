@@ -9,11 +9,11 @@ import axios from "axios";
   Link
 } from "react-router-dom";*/
 import firebase from "./firebase.js";
-import Preview from "./components/Preview.js";
+import Preview from "./components/Preview";
 import SearchResults from "./components/SearchResults";
+import FavoritesList from "./components/FavoritesList";
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
-
 
 class App extends Component {
   constructor(props) {
@@ -42,8 +42,6 @@ class App extends Component {
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
 
-    this.addToFavorites = this.addToFavorites.bind(this);
-
     this.goBack = this.goBack.bind(this);
     this.goHome = this.goHome.bind(this);
 
@@ -51,6 +49,10 @@ class App extends Component {
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 
     this.logout = this.logout.bind(this);
+
+    this.addToFavorites = this.addToFavorites.bind(this);
+
+    //this.deleteBook = this.deleteBook.bind(this);
   }
 
   handleSubmit(e) {
@@ -126,8 +128,6 @@ class App extends Component {
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((result) => {
           this.setState({
-            email: "",
-            password: "",
             user: result.user,
             loggedIn: true,
           });
@@ -139,6 +139,11 @@ class App extends Component {
           email: this.state.email,
           favoritesList: [],
         });
+
+      this.set.state({
+        email: "",
+        password: "",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -191,6 +196,7 @@ class App extends Component {
           user: user,
           loggedIn: true,
         });
+        console.log(user.email);
 
         const favoritesRef = firebase
           .database()
@@ -289,29 +295,16 @@ class App extends Component {
                 addToFavorites={this.addToFavorites}
               />
             ) : this.state.searching && !this.state.opened ? (
-              <SearchResults items={this.state.items} handleClick={this.handleClick}/>
+              <SearchResults
+                items={this.state.items}
+                handleClick={this.handleClick}
+              />
             ) : (
-              <div>
-                <h2>Your favorite books</h2>
-                <div className="favorites">
-                  {this.state.favorites.map((item, index) => {
-                    return (
-                      <div className="favorite-items" key={index}>
-                        <p className="book-title">
-                          {this.state.favorites[index].id.title}
-                        </p>
-                        <img
-                          src={this.state.favorites[index].id.image}
-                          alt=""
-                        />
-                        <p className="book-author">
-                          {this.state.favorites[index].id.author[0]}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <FavoritesList
+                favorites={this.state.favorites}
+                user={this.state.user}
+                userInput={this.state.userInput}
+              />
             )}
             {/*<button type="submit">+</button>*/}
           </div>

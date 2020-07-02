@@ -1,13 +1,6 @@
 import React from "react";
 
 class SearchResults extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        items: this.props.items
-    }
-  }
-
   handleClick = () => {
     this.props.handleClick();
   }
@@ -16,8 +9,8 @@ class SearchResults extends React.Component {
     return (
       <div className="search-results">
         {
-          this.state.items.map((item, index) => {
-            let volumeInfo = this.state.items[index]["volumeInfo"];
+          this.props.items.map((item, index) => {
+            let volumeInfo = this.props.items[index]["volumeInfo"];
             return (
               <div
                 className="search-result"
