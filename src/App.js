@@ -1,23 +1,30 @@
 import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
+
 //import Logo from "./components/Logo";
+
 /*import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
 } from "react-router-dom";*/
+
 import firebase from "./firebase.js";
 import Preview from "./components/Preview";
 import SearchResults from "./components/SearchResults";
+//import SearchBar from "./components/SearchBar";
+
 import FavoritesList from "./components/FavoritesList";
+import CurrentReads from "./components/CurrentReads";
 
 import EmailForm from "./components/EmailForm";
 import PasswordForm from "./components/PasswordForm";
 
 import SignupButton from "./components/SignupButton";
 import LoginButton from "./components/LoginButton";
+import LogoutButton from "./components/LogoutButton";
 
 const API_URL = `https://www.googleapis.com/books/v1/volumes`;
 
@@ -40,6 +47,14 @@ class App extends Component {
       loggedIn: false,
       user: null,
       IDs: [],
+      currentReads: [],
+      ratingNow: false,
+      rating: 1,
+      one: false,
+      two: false,
+      three: false,
+      four: false,
+      five: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -50,15 +65,15 @@ class App extends Component {
 
     this.goBack = this.goBack.bind(this);
     this.goHome = this.goHome.bind(this);
+    this.startRating = this.startRating.bind(this);
 
     this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 
     this.logout = this.logout.bind(this);
 
-    this.addToFavorites = this.addToFavorites.bind(this);
-
-    //this.deleteBook = this.deleteBook.bind(this);
+    //this.addToList = this.addToList.bind(this);
+    //this.setRating = this.setRating.bind(this);
   }
 
   handleSubmit(e) {
@@ -111,6 +126,12 @@ class App extends Component {
       opened: false,
       searching: false,
       userInput: "",
+    });
+  }
+
+  startRating() {
+    this.setState({
+      ratingNow: true,
     });
   }
 
@@ -178,10 +199,25 @@ class App extends Component {
     });
   }
 
-  addToFavorites(e) {
-    e.preventDefault();
+  /*addToList(ref) {
+    //e.preventDefault();
+    this.setState({
+      ratingNow: true,
+    });
 
-    const favoritesRef = firebase
+    console.log(this.state.rating);
+
+    const newItem = {
+      title: this.state.itemTitle,
+      author: this.state.itemAuthor,
+      image: this.state.itemImage,
+      id: Date.now(),
+      rating: this.state.rating,
+    };
+
+    ref.push(newItem);
+
+    /*const favoritesRef = firebase
       .database()
       .ref(`/users/${this.state.user.uid}/favoritesList`);
 
@@ -192,8 +228,8 @@ class App extends Component {
       id: Date.now(),
     };
 
-    favoritesRef.push(newFavorite);
-  }
+    favoritesRef.push(newFavorite);*/
+  //}*/
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
@@ -206,7 +242,11 @@ class App extends Component {
 
         const favoritesRef = firebase
           .database()
-          .ref("users/" + this.state.user.uid + "/favoritesList");
+          .ref(`/users/${this.state.user.uid}/favoritesList`);
+
+        const currentReadsRef = firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/currentReads`);
 
         favoritesRef.on("value", (snapshot) => {
           let favoritesList = snapshot.val();
@@ -220,6 +260,21 @@ class App extends Component {
 
           this.setState({
             favorites: [...newState],
+          });
+        });
+
+        currentReadsRef.on("value", (snapshot) => {
+          let currentReadsList = snapshot.val();
+          let newState = [];
+          for (let currRead in currentReadsList) {
+            newState.push({
+              key: currRead,
+              id: currentReadsList[currRead],
+            });
+          }
+
+          this.setState({
+            currentReads: [...newState],
           });
         });
       }
@@ -245,6 +300,7 @@ class App extends Component {
               <Home userInput={this.state.userInput} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
             </Route>
           </Switch>
+
           </Router>*/}
             <h1 className="logo" onClick={this.goHome}>
               Bookly
@@ -262,13 +318,7 @@ class App extends Component {
                 <button type="submit" className="search-btn">
                   Search
                 </button>
-                <button
-                  type="button"
-                  className="logout-btn"
-                  onClick={this.logout}
-                >
-                  Log out
-                </button>
+                <LogoutButton logout={this.logout} />
               </div>
             </form>
             {this.state.opened && this.state.searching ? (
@@ -277,20 +327,32 @@ class App extends Component {
                 itemAuthor={this.state.itemAuthor}
                 itemImage={this.state.itemImage}
                 desc={this.state.itemDescription}
+                user={this.state.user}
                 goBack={this.goBack}
-                addToFavorites={this.addToFavorites}
+                addToList={this.addToList}
+                startRating={this.startRating}
+                rating={this.state.rating}
               />
-            ) : this.state.searching && !this.state.opened ? (
+            ) : this.state.ratingNow ?
+            <h1>HELLO</h1>
+            : this.state.searching && !this.state.opened ? (
               <SearchResults
                 items={this.state.items}
                 handleClick={this.handleClick}
               />
             ) : (
-              <FavoritesList
-                favorites={this.state.favorites}
-                user={this.state.user}
-                userInput={this.state.userInput}
-              />
+              <div>
+                <FavoritesList
+                  favorites={this.state.favorites}
+                  user={this.state.user}
+                  userInput={this.state.userInput}
+                />
+                <CurrentReads
+                  currentReads={this.state.currentReads}
+                  user={this.state.user}
+                  userInput={this.state.userInput}
+                />
+              </div>
             )}
             {/*<button type="submit">+</button>*/}
           </div>
