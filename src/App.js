@@ -48,8 +48,6 @@ class App extends Component {
       user: null,
       IDs: [],
       currentReads: [],
-      ratingNow: false,
-      rating: 1,
       one: false,
       two: false,
       three: false,
@@ -65,7 +63,6 @@ class App extends Component {
 
     this.goBack = this.goBack.bind(this);
     this.goHome = this.goHome.bind(this);
-    this.startRating = this.startRating.bind(this);
 
     this.handleSignupSubmit = this.handleSignupSubmit.bind(this);
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
@@ -126,12 +123,6 @@ class App extends Component {
       opened: false,
       searching: false,
       userInput: "",
-    });
-  }
-
-  startRating() {
-    this.setState({
-      ratingNow: true,
     });
   }
 
@@ -330,8 +321,6 @@ class App extends Component {
                 user={this.state.user}
                 goBack={this.goBack}
                 addToList={this.addToList}
-                startRating={this.startRating}
-                rating={this.state.rating}
               />
             ) : this.state.ratingNow ?
             <h1>HELLO</h1>
