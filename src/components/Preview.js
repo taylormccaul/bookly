@@ -14,11 +14,11 @@ export default class Preview extends Component {
 
     this.state = {
       user: this.props.user,
-      one: this.props.one,
-      two: this.props.two,
-      three: this.props.three,
-      four: this.props.four,
-      five: this.props.five,
+      one: false,
+      two: false,
+      three: false,
+      four: false,
+      five: false,
       rating: 1,
       ratingNow: false,
       doneRating: true,
@@ -26,6 +26,8 @@ export default class Preview extends Component {
       itemAuthor: this.props.itemAuthor,
       itemImage: this.props.itemImage,
       itemDesc: this.props.itemDesc,
+      items: this.props.items,
+      ratedYet: false,
     };
   }
 
@@ -41,8 +43,8 @@ export default class Preview extends Component {
       //e.preventDefault();
       if (
         ref.path.pieces_[2] ===
-        firebase.database().ref(`/users/${this.state.user.uid}/favoritesList`)
-          .path.pieces_[2]
+        firebase.database().ref(`/users/${this.state.user.uid}/readList`).path
+          .pieces_[2]
       ) {
         this.setState({
           ratingNow: true,
@@ -61,32 +63,43 @@ export default class Preview extends Component {
         ref.push(newItem);
       }
 
-      //console.log(this.state.rating);
-
-      /*const newItem = {
-        title: this.state.itemTitle,
-        author: this.state.itemAuthor,
-        image: this.state.itemImage,
-        rating: this.state.rating,
-        id: Date.now(),
-      };
-
-      ref.push(newItem);*/
-
-      /*const favoritesRef = firebase
+      /*const readRef = firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/favoritesList`);
+          .ref(`/users/${this.state.user.uid}/readList`);
     
-        const newFavorite = {
+        const newPastRead = {
           title: this.state.itemTitle,
           author: this.state.itemAuthor,
           image: this.state.itemImage,
           id: Date.now(),
         };
     
-        favoritesRef.push(newFavorite);*/
+        readRef.push(newPastRead);*/
     }
   };
+
+  componentDidMount() {
+    firebase
+      .database()
+      .ref(`/users/${this.state.user.uid}/readList`)
+      .on("value", (snapshot) => {
+        for (let item in snapshot.val()) {
+          firebase
+            .database()
+            .ref(`/users/${this.state.user.uid}/readList/${item}`)
+            .on("value", (snapshot) => {
+              if (snapshot.val().title === this.state.itemTitle) {
+                this.setState({
+                  ratedYet: true,
+                  rating: snapshot.val().rating
+                });
+              } else {
+                console.log("UNEQUAL");
+              }
+            });
+        }
+      });
+  }
 
   finishRating = (ref) => {
     console.log(
@@ -116,6 +129,8 @@ export default class Preview extends Component {
           one: !this.state.one,
           rating: 1,
         });
+
+        console.log(this.state.one);
 
         if (this.state.one === true) {
           this.setState({
@@ -239,6 +254,9 @@ export default class Preview extends Component {
 
   render() {
     //console.log(this.state.ratingNow);
+    /*for (let i = 0; i < 5; i++) {
+      
+    }*/
     return !this.state.ratingNow && this.state.doneRating ? (
       <div className="preview">
         <header>
@@ -255,6 +273,51 @@ export default class Preview extends Component {
         <div className="img-and-desc">
           <div className="img">
             <img src={this.props.itemImage} alt="" />
+            {this.state.rating === 1 && this.state.ratedYet ? (
+              <div className="star-ratings">
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+              </div>
+            ) : this.state.rating === 2 && this.state.ratedYet ? (
+              <div className="star-ratings">
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+              </div>
+            ) : this.state.rating === 3 && this.state.ratedYet ? (
+              <div className="star-ratings">
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star"></span>
+                <span className="fa fa-star"></span>
+              </div>
+            ) : this.state.rating === 4 && this.state.ratedYet ? (
+              <div className="star-ratings">
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star"></span>
+              </div>
+            ) : this.state.rating === 5 && this.state.ratedYet ? (
+              <div className="star-ratings">
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+                <span className="fa fa-star checked"></span>
+              </div>
+            ) : this.state.ratedYet === false ? (
+              <p>Not yet rated</p>
+            ) : (
+              console.log("ERROR")
+            )}
             <button
               type="button"
               onClick={() =>
@@ -273,11 +336,11 @@ export default class Preview extends Component {
                 this.addToList(
                   firebase
                     .database()
-                    .ref(`/users/${this.state.user.uid}/favoritesList`)
+                    .ref(`/users/${this.state.user.uid}/readList`)
                 )
               }
             >
-              Add to favorite books
+              Add to past reads
             </button>
           </div>
           <div className="desc">
@@ -287,7 +350,10 @@ export default class Preview extends Component {
       </div>
     ) : (
       <div className="ratings-div">
-        <h3>What rating would you give <span className="book-rating-title">{this.state.itemTitle}</span>?</h3>
+        <h3>
+          What rating would you give
+          <span className="book-rating-title"> {this.state.itemTitle}</span>?
+        </h3>
 
         {this.state.one === false ? (
           <span
@@ -350,11 +416,11 @@ export default class Preview extends Component {
         )}
 
         <button
-          onClick={() => this.finishRating(
-            firebase
-              .database()
-              .ref(`/users/${this.state.user.uid}/favoritesList`)
-          )}
+          onClick={() =>
+            this.finishRating(
+              firebase.database().ref(`/users/${this.state.user.uid}/readList`)
+            )
+          }
         >
           Done
         </button>

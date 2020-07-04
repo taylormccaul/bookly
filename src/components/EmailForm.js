@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
 export default class EmailForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleEmail = (e) => {
     this.props.handleEmail(e);
   }

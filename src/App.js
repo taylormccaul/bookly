@@ -16,7 +16,7 @@ import Preview from "./components/Preview";
 import SearchResults from "./components/SearchResults";
 //import SearchBar from "./components/SearchBar";
 
-import FavoritesList from "./components/FavoritesList";
+import ReadList from "./components/ReadList";
 import CurrentReads from "./components/CurrentReads";
 
 import EmailForm from "./components/EmailForm";
@@ -41,18 +41,14 @@ class App extends Component {
       itemIndex: "",
       opened: false,
       searching: false,
-      favorites: [],
+      read: [],
       email: "",
       password: "",
       loggedIn: false,
       user: null,
       IDs: [],
       currentReads: [],
-      one: false,
-      two: false,
-      three: false,
-      four: false,
-      five: false,
+      shortened: true,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -155,7 +151,7 @@ class App extends Component {
         .ref("users/" + this.state.user.uid)
         .set({
           email: this.state.email,
-          favoritesList: [],
+          readList: [],
         });
 
       this.set.state({
@@ -208,18 +204,18 @@ class App extends Component {
 
     ref.push(newItem);
 
-    /*const favoritesRef = firebase
+    /*const readRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/favoritesList`);
+      .ref(`/users/${this.state.user.uid}/readList`);
 
-    const newFavorite = {
+    const newPastRead = {
       title: this.state.itemTitle,
       author: this.state.itemAuthor,
       image: this.state.itemImage,
       id: Date.now(),
     };
 
-    favoritesRef.push(newFavorite);*/
+    readRef.push(newPastRead);*/
   //}*/
 
   componentDidMount() {
@@ -231,26 +227,26 @@ class App extends Component {
         });
         console.log(user.email);
 
-        const favoritesRef = firebase
+        const readRef = firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/favoritesList`);
+          .ref(`/users/${this.state.user.uid}/readList`);
 
         const currentReadsRef = firebase
           .database()
           .ref(`/users/${this.state.user.uid}/currentReads`);
 
-        favoritesRef.on("value", (snapshot) => {
-          let favoritesList = snapshot.val();
+        readRef.on("value", (snapshot) => {
+          let readList = snapshot.val();
           let newState = [];
-          for (let favorite in favoritesList) {
+          for (let read in readList) {
             newState.push({
-              key: favorite,
-              id: favoritesList[favorite],
+              key: read,
+              id: readList[read],
             });
           }
 
           this.setState({
-            favorites: [...newState],
+            read: [...newState],
           });
         });
 
@@ -283,7 +279,7 @@ class App extends Component {
             <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
           </form>
         ) : (
-          <div className="app" onLoad={this.updateFavorites}>
+          <div className="app" onLoad={this.updateRead}>
             {/*<Router>
           <Link to="/home">Home</Link>
           <Switch>
@@ -321,26 +317,33 @@ class App extends Component {
                 user={this.state.user}
                 goBack={this.goBack}
                 addToList={this.addToList}
+                items={this.state.items}
               />
-            ) : this.state.ratingNow ?
-            <h1>HELLO</h1>
-            : this.state.searching && !this.state.opened ? (
+            ) : this.state.ratingNow ? (
+              <h1>HELLO</h1>
+            ) : this.state.searching && !this.state.opened ? (
               <SearchResults
                 items={this.state.items}
                 handleClick={this.handleClick}
               />
             ) : (
-              <div>
-                <FavoritesList
-                  favorites={this.state.favorites}
-                  user={this.state.user}
-                  userInput={this.state.userInput}
-                />
-                <CurrentReads
-                  currentReads={this.state.currentReads}
-                  user={this.state.user}
-                  userInput={this.state.userInput}
-                />
+              <div className="bookshelves">
+                <h2>Your bookshelves</h2>
+                <button type="button">View all</button>
+                <div className="list-div">
+                  <ReadList
+                    read={this.state.read}
+                    user={this.state.user}
+                    userInput={this.state.userInput}
+                    shortened={this.state.shortened}
+                  />
+                  <CurrentReads
+                    currentReads={this.state.currentReads}
+                    user={this.state.user}
+                    userInput={this.state.userInput}
+                    shortened={this.state.shortened}
+                  />
+                </div>
               </div>
             )}
             {/*<button type="submit">+</button>*/}

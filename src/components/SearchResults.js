@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export default class SearchResults extends React.Component {
+export default class SearchResults extends Component {
   handleClick = () => {
     this.props.handleClick();
   }

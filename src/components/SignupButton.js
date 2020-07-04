@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
 export default class SignupButton extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleSignupSubmit = () => {
     this.props.handleSignupSubmit();
   }

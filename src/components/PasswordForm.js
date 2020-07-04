@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
 export default class PasswordForm extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handlePassword = (e) => {
     this.props.handlePassword(e);
   };

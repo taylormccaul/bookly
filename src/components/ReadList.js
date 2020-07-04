@@ -1,16 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import firebase from "../firebase.js";
 
-export default class CurrentReads extends Component {
+class ReadList extends React.Component {
   _isMounted = false;
 
   constructor(props) {
     super(props);
     this.state = {
-      currentReads: this.props.currentReads,
+      read: this.props.read,
       userInput: this.props.userInput,
       user: this.props.user,
-      shortened: this.props.shortened
+      shortened: this.props.shortened,
     };
 
     this.deleteBook = this.deleteBook.bind(this);
@@ -19,31 +19,31 @@ export default class CurrentReads extends Component {
   deleteBook(book) {
     const bookRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/currentReads/${book}`);
+      .ref(`/users/${this.state.user.uid}/readList/${book}`);
 
     bookRef.remove();
   }
 
   componentDidMount() {
     this._isMounted = true;
-    const currentReadsRef = firebase
+    const readRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/currentReads`);
+      .ref(`/users/${this.state.user.uid}/readList`);
 
-    currentReadsRef.on("value", (snapshot) => {
-      let currentReads = snapshot.val();
+    readRef.on("value", (snapshot) => {
+      let readList = snapshot.val();
       let newState = [];
 
-      for (let currRead in currentReads) {
+      for (let read in readList) {
         newState.push({
-          key: currRead,
-          id: currentReads[currRead],
+          key: read,
+          id: readList[read],
         });
       }
 
       if (this._isMounted) {
         this.setState({
-          currentReads: [...newState],
+          read: [...newState],
         });
       }
     });
@@ -56,49 +56,49 @@ export default class CurrentReads extends Component {
   render() {
     return (
       <div>
-        {this.state.currentReads[0] === undefined && this.state.userInput === "" ? (
+        {this.state.read[0] === undefined && this.state.userInput === "" ? (
           <div className="read-header">
-            <h2>You have no current reads!</h2>
+            <h2>You have no past reads!</h2>
           </div>
         ) : this.state.shortened ? (
-          <div className="current-reads-div">
+          <div className="past-reads-div">
             <div className="read-header">
-              <h2>Your current reads</h2>
+              <h2>Your past reads</h2>
             </div>
             <div className="read">
               <div
                 className="read-items"
-                key={Math.floor(Math.random() * 100) + 10}
-                onClick={() => this.deleteBook(this.state.currentReads[0].key)}
+                key={Math.floor(Math.random() * 100) + 5}
+                onClick={() => this.deleteBook(this.state.read[0].key)}
               >
-                <p className="book-title">{this.state.currentReads[0].id.title}</p>
-                <img src={this.state.currentReads[0].id.image} alt="" />
+                <p className="book-title">{this.state.read[0].id.title}</p>
+                <img src={this.state.read[0].id.image} alt="" />
                 <p className="book-author">
-                  {this.state.currentReads[0].id.author[0]}
+                  {this.state.read[0].id.author[0]}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <div className="current-reads-div">
+          <div className="past-reads-div">
             <div className="read-header">
-              <h2>Your current reads</h2>
+              <h2>Your past reads</h2>
               <button type="button">View all</button>
             </div>
             <div className="read">
-              {this.state.currentReads.map((item, index) => {
+              {this.state.read.map((item, index) => {
                 return (
                   <div
                     className="read-items"
                     key={index}
-                    onClick={() => this.deleteBook(this.state.currentReads[index].key)}
+                    onClick={() => this.deleteBook(this.state.read[index].key)}
                   >
                     <p className="book-title">
-                      {this.state.currentReads[index].id.title}
+                      {this.state.read[index].id.title}
                     </p>
-                    <img src={this.state.currentReads[index].id.image} alt="" />
+                    <img src={this.state.read[index].id.image} alt="" />
                     <p className="book-author">
-                      {this.state.currentReads[index].id.author[0]}
+                      {this.state.read[index].id.author[0]}
                     </p>
                   </div>
                 );
@@ -110,3 +110,5 @@ export default class CurrentReads extends Component {
     );
   }
 }
+
+export default ReadList;
