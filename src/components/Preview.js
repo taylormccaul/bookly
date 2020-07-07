@@ -16,8 +16,9 @@ export default class Preview extends Component {
       three: false,
       four: false,
       five: false,
-      rating: 1,
+      rating: null,
       ratingNow: false,
+      ratedYet: false,
       doneRating: true,
       itemTitle: this.props.itemTitle,
       itemAuthor: this.props.itemAuthor,
@@ -54,6 +55,7 @@ export default class Preview extends Component {
           author: this.state.itemAuthor,
           image: this.state.itemImage,
           rating: this.state.rating,
+          ratedYet: this.state.ratedYet,
           id: Date.now(),
         };
 
@@ -85,13 +87,15 @@ export default class Preview extends Component {
             .database()
             .ref(`/users/${this.state.user.uid}/readList/${item}`)
             .on("value", (snapshot) => {
-              if (snapshot.val().title === this.state.itemTitle) {
-                this.setState({
-                  ratedYet: true,
-                  rating: snapshot.val().rating
-                });
-              } else {
-                console.log("UNEQUAL");
+              if (snapshot.val() != null) {
+                if (snapshot.val().title === this.state.itemTitle) {
+                  this.setState({
+                    ratedYet: true,
+                    rating: snapshot.val().rating,
+                  });
+                } else {
+                  console.log("UNEQUAL");
+                }
               }
             });
         }
@@ -108,6 +112,7 @@ export default class Preview extends Component {
       author: this.state.itemAuthor,
       image: this.state.itemImage,
       rating: this.state.rating,
+      ratedYet: true,
       id: Date.now(),
     };
 
@@ -270,7 +275,10 @@ export default class Preview extends Component {
         <div className="img-and-desc">
           <div className="img">
             <img src={this.props.itemImage} alt="" />
-            <RatingsDisplay rating={this.state.rating} ratedYet={this.state.ratedYet} />
+            <RatingsDisplay
+              rating={this.state.rating}
+              ratedYet={this.state.ratedYet}
+            />
             {/*this.state.rating === 1 && this.state.ratedYet ? (
               <div className="star-ratings">
                 <span className="fa fa-star checked"></span>

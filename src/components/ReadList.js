@@ -1,6 +1,8 @@
 import React from "react";
 import firebase from "../firebase.js";
 
+import RatingsDisplay from "./RatingsDisplay";
+
 class ReadList extends React.Component {
   _isMounted = false;
 
@@ -11,7 +13,12 @@ class ReadList extends React.Component {
       userInput: this.props.userInput,
       user: this.props.user,
       shortened: this.props.shortened,
-      bookIDs: []
+      bookIDs: [],
+      rating: 1,
+      ratedYet: false,
+      itemTitle: this.props.itemTitle,
+      itemAuthor: this.props.itemAuthor,
+      itemImage: this.props.itemImage,
     };
 
     this.deleteBook = this.deleteBook.bind(this);
@@ -27,6 +34,7 @@ class ReadList extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
+
     const readRef = firebase
       .database()
       .ref(`/users/${this.state.user.uid}/readList`);
@@ -40,13 +48,11 @@ class ReadList extends React.Component {
           key: read,
           id: readList[read],
         });
-
-        this.setState({
-          bookIDs: [...newState]
-        });
       }
 
-      console.log(this.state.bookIDs)
+      /*this.setState({
+        bookIDs: [...newState],
+      });*/
 
       if (this._isMounted) {
         this.setState({
@@ -54,6 +60,30 @@ class ReadList extends React.Component {
         });
       }
     });
+
+    /*firebase
+      .database()
+      .ref(`/users/${this.state.user.uid}/readList`)
+      .on("value", (snapshot) => {
+        for (let item in snapshot.val()) {
+          firebase
+            .database()
+            .ref(`/users/${this.state.user.uid}/readList/${item}`)
+            .on("value", (snapshot) => {
+              for (let index in this.state.bookIDs) {
+                console.log(snapshot.val())
+                if (snapshot.val().title === this.state.bookIDs[index].id.title) {
+                  this.setState({
+                    ratedYet: true,
+                    rating: snapshot.val().rating,
+                  });
+                } else {
+                  console.log("-");
+                }
+              }
+            });
+        }
+      });*/
   }
 
   componentWillUnmount() {
@@ -80,9 +110,11 @@ class ReadList extends React.Component {
               >
                 <p className="book-title">{this.state.read[0].id.title}</p>
                 <img src={this.state.read[0].id.image} alt="" />
-                <p className="book-author">
-                  {this.state.read[0].id.author[0]}
-                </p>
+                <p className="book-author">{this.state.read[0].id.author[0]}</p>
+                <RatingsDisplay
+                  rating={this.state.read[0].id.rating}
+                  ratedYet={this.state.read[0].id.ratedYet}
+                />
               </div>
             </div>
           </div>
@@ -107,6 +139,10 @@ class ReadList extends React.Component {
                     <p className="book-author">
                       {this.state.read[index].id.author[0]}
                     </p>
+                    <RatingsDisplay
+                      rating={this.state.read[index].id.rating}
+                      ratedYet={this.state.read[index].id.ratedYet}
+                    />
                   </div>
                 );
               })}

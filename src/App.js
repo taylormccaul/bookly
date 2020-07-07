@@ -101,6 +101,8 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
       currentReads: [],
       shortened: true,
       currentPage: "",
+      rating: null,
+      ratedYet: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -300,6 +302,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
         readRef.on("value", (snapshot) => {
           let readList = snapshot.val();
           let newState = [];
+
           for (let read in readList) {
             newState.push({
               key: read,
@@ -326,6 +329,27 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
             currentReads: [...newState],
           });
         });
+
+        /*firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/readList`)
+          .on("value", (snapshot) => {
+            for (let item in snapshot.val()) {
+              firebase
+                .database()
+                .ref(`/users/${this.state.user.uid}/readList/${item}`)
+                .on("value", (snapshot) => {
+                  if (snapshot.val().title === this.state.itemTitle) {
+                    this.setState({
+                      ratedYet: true,
+                      rating: snapshot.val().rating,
+                    });
+                  } else {
+                    console.log("UNEQUAL");
+                  }
+                });
+            }
+          });*/
       }
     });
   }
@@ -422,12 +446,18 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                             user={this.state.user}
                             userInput={this.state.userInput}
                             shortened={this.state.shortened}
+                            itemTitle={this.state.itemTitle}
+                            itemAuthor={this.state.itemAuthor}
+                            itemImage={this.state.itemImage}
                           />
                           <CurrentReads
                             currentReads={this.state.currentReads}
                             user={this.state.user}
                             userInput={this.state.userInput}
                             shortened={this.state.shortened}
+                            itemTitle={this.state.itemTitle}
+                            itemAuthor={this.state.itemAuthor}
+                            itemImage={this.state.itemImage}
                           />
                         </div>
                       </div>
@@ -445,12 +475,18 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                   user={this.state.user}
                   userInput={this.state.userInput}
                   shortened={false}
+                  itemTitle={this.state.itemTitle}
+                  itemAuthor={this.state.itemAuthor}
+                  itemImage={this.state.itemImage}
                 />
                 <CurrentReads
                   currentReads={this.state.currentReads}
                   user={this.state.user}
                   userInput={this.state.userInput}
                   shortened={false}
+                  itemTitle={this.state.itemTitle}
+                  itemAuthor={this.state.itemAuthor}
+                  itemImage={this.state.itemImage}
                 />
               </div>
             </div>

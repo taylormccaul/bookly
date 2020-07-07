@@ -5,8 +5,8 @@ export default class RatingsDisplay extends Component {
     super(props);
 
     this.state = {
-        rating: this.props.rating,
-        ratedYet: this.props.ratedYet
+      rating: this.props.rating,
+      ratedYet: this.props.ratedYet,
     };
   }
 
@@ -55,8 +55,10 @@ export default class RatingsDisplay extends Component {
           </div>
         ) : this.state.ratedYet === false ? (
           <p>Not yet rated</p>
+        ) : this.state.rating === null ? (
+            <p>Not yet rated</p>
         ) : (
-          console.log("ERROR")
+          console.log(this.state.rating)
         )}
       </div>
     );

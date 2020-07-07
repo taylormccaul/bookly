@@ -75,7 +75,7 @@
 
 .home-list-div {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 30%));
+  grid-template-columns: repeat(2, minmax(300px, 30%));
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
