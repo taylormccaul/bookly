@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Yellowtail&family=Krona+One&family=Rubik:wght@500&family=Oswald&family=Raleway&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url("https://fonts.googleapis.com/css2?family=Yellowtail&family=Krona+One&family=Rubik:wght@500&family=Oswald&family=Raleway&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
 /*button {
   width: 10%;
@@ -10,6 +10,10 @@
   background-color: rgb(250, 250, 250);
   cursor: pointer;
 }*/
+
+.shelves-link {
+  text-decoration: none;
+}
 
 .fa {
   font-size: 30px;
@@ -32,7 +36,8 @@
   margin: 1em;
 }
 
-.read-header button, .bookshelves button {
+.read-header button,
+.bookshelves button {
   width: 150px;
   padding: 5px;
   display: block;
@@ -40,7 +45,7 @@
   margin-right: auto;
 }
 
-.read {
+.home-read {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   padding: 1em;
@@ -51,15 +56,35 @@
   overflow: hidden;
 }
 
+.shelves-read {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  padding: 1em;
+  box-sizing: border-box;
+  grid-gap: 3%;
+  width: 100%;
+  /*max-height: 19.5em;*/
+  margin-bottom: 1em;
+}
+
 .read-items {
   text-align: center;
   background-color: rgb(250, 250, 250);
   border-radius: 5px;
 }
 
-.list-div {
+.home-list-div {
   display: grid;
-  grid-template-columns: repeat(2, minmax(300px, 30%));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 30%));
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  text-align: center;
+}
+
+.shelves-list-div {
+  display: grid;
+  grid-template-columns: repeat(1, 100%);
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
@@ -67,7 +92,7 @@
 }
 
 .logo {
-  font-family: 'Yellowtail', Georgia, serif;
+  font-family: "Yellowtail", Georgia, serif;
   font-size: 2.8em;
   cursor: pointer;
   margin-bottom: 0;
@@ -76,17 +101,17 @@
 
 h2 {
   text-align: center;
-  font-family: 'Rubik', Helvetica, sans-serif;
+  font-family: "Rubik", Helvetica, sans-serif;
 }
 
 .book-title {
-  font-family: 'Oswald', Helvetica, sans-serif;
+  font-family: "Oswald", Helvetica, sans-serif;
   font-size: 1.3em;
   margin: 0.2em 0.5em;
 }
 
 .book-author {
-  font-family: 'Raleway', Arial, sans-serif;
+  font-family: "Raleway", Arial, sans-serif;
 }
 
 img {
@@ -111,7 +136,8 @@ img {
   /*box-shadow: 0px 1px 1px 1px rgba(80, 80, 80, 0.1);*/
 }
 
-.search-result:hover, .read-items:hover {
+.search-result:hover,
+.read-items:hover {
   box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
@@ -133,7 +159,7 @@ button {
   border-radius: 0.25em;
   box-sizing: border-box;
   text-decoration: none;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   color: white;
   text-align: center;
   cursor: pointer;
@@ -147,7 +173,7 @@ button:hover {
   box-sizing: border-box;
 }
 
-@media only screen and (min-width:741px) {
+@media only screen and (min-width: 741px) {
   .search-form div {
     display: inline-block;
   }
@@ -240,7 +266,7 @@ button:hover {
 
 .info {
   display: inline-block;
-  grid-column: 1 / 4
+  grid-column: 1 / 4;
 }
 
 .back {

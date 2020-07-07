@@ -11,6 +11,7 @@ class ReadList extends React.Component {
       userInput: this.props.userInput,
       user: this.props.user,
       shortened: this.props.shortened,
+      bookIDs: []
     };
 
     this.deleteBook = this.deleteBook.bind(this);
@@ -39,7 +40,13 @@ class ReadList extends React.Component {
           key: read,
           id: readList[read],
         });
+
+        this.setState({
+          bookIDs: [...newState]
+        });
       }
+
+      console.log(this.state.bookIDs)
 
       if (this._isMounted) {
         this.setState({
@@ -60,12 +67,12 @@ class ReadList extends React.Component {
           <div className="read-header">
             <h2>You have no past reads!</h2>
           </div>
-        ) : this.state.shortened ? (
+        ) : this.state.shortened === true ? (
           <div className="past-reads-div">
             <div className="read-header">
               <h2>Your past reads</h2>
             </div>
-            <div className="read">
+            <div className="home-read">
               <div
                 className="read-items"
                 key={Math.floor(Math.random() * 100) + 5}
@@ -85,7 +92,7 @@ class ReadList extends React.Component {
               <h2>Your past reads</h2>
               <button type="button">View all</button>
             </div>
-            <div className="read">
+            <div className="shelves-read">
               {this.state.read.map((item, index) => {
                 return (
                   <div

@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../firebase.js";
-/*import OneStar from "./ratings/OneStar";
-import TwoStar from "./ratings/TwoStar";
-import ThreeStar from "./ratings/ThreeStar";
-import FourStar from "./ratings/FourStar";
-import FiveStar from "./ratings/FiveStar";*/
+
+import RatingsDisplay from "./RatingsDisplay";
 
 export default class Preview extends Component {
   _isMounted = false;
@@ -51,7 +48,7 @@ export default class Preview extends Component {
           doneRating: false,
         });
       } else {
-        console.log(ref.path.pieces_);
+        //console.log(ref.path.pieces_);
         const newItem = {
           title: this.state.itemTitle,
           author: this.state.itemAuthor,
@@ -273,7 +270,8 @@ export default class Preview extends Component {
         <div className="img-and-desc">
           <div className="img">
             <img src={this.props.itemImage} alt="" />
-            {this.state.rating === 1 && this.state.ratedYet ? (
+            <RatingsDisplay rating={this.state.rating} ratedYet={this.state.ratedYet} />
+            {/*this.state.rating === 1 && this.state.ratedYet ? (
               <div className="star-ratings">
                 <span className="fa fa-star checked"></span>
                 <span className="fa fa-star"></span>
@@ -317,7 +315,7 @@ export default class Preview extends Component {
               <p>Not yet rated</p>
             ) : (
               console.log("ERROR")
-            )}
+            )*/}
             <button
               type="button"
               onClick={() =>

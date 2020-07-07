@@ -65,7 +65,7 @@ export default class CurrentReads extends Component {
             <div className="read-header">
               <h2>Your current reads</h2>
             </div>
-            <div className="read">
+            <div className="home-read">
               <div
                 className="read-items"
                 key={Math.floor(Math.random() * 100) + 10}
@@ -85,7 +85,7 @@ export default class CurrentReads extends Component {
               <h2>Your current reads</h2>
               <button type="button">View all</button>
             </div>
-            <div className="read">
+            <div className="shelves-read">
               {this.state.currentReads.map((item, index) => {
                 return (
                   <div

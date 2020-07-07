@@ -11,6 +11,37 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+/*: !this.state.opened && this.state.searching && window.location.href.includes("search?q=") ? (
+                    <SearchResults
+                      items={this.state.items}
+                      handleClick={this.handleClick}
+                    />
+                  )*/
+                    /*: !this.state.opened && this.state.searching && window.location.href.includes("search?q=") ? (
+                    <SearchResults
+                      items={this.state.items}
+                      handleClick={this.handleClick}
+                    />
+                  )*/
+                    /*: !this.state.opened && this.state.searching && window.location.href.includes("search?q=") ? (
+                    <SearchResults
+                      items={this.state.items}
+                      handleClick={this.handleClick}
+                    />
+                  )*/
+                    /*: !this.state.opened && this.state.searching && window.location.href.includes("search?q=") ? (
+                    <SearchResults
+                      items={this.state.items}
+                      handleClick={this.handleClick}
+                    />
+                  )*/
+                    /*: !this.state.opened && this.state.searching && window.location.href.includes("search?q=") ? (
+                    <SearchResults
+                      items={this.state.items}
+                      handleClick={this.handleClick}
+                    />
+                  )*/
+
 /*class App extends Component {
   constructor() {
     super();

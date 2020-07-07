@@ -4,12 +4,7 @@ import axios from "axios";
 
 //import Logo from "./components/Logo";
 
-/*import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";*/
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import firebase from "./firebase.js";
 import Preview from "./components/Preview";
@@ -26,9 +21,65 @@ import SignupButton from "./components/SignupButton";
 import LoginButton from "./components/LoginButton";
 import LogoutButton from "./components/LogoutButton";
 
-const API_URL = `https://www.googleapis.com/books/v1/volumes`;
+const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
+    </div>
+  );
+}*/
 
-class App extends Component {
+/*function Home() {
+  return (
+    <div>
+      <h1 className="logo" onClick={this.goHome}>
+        Bookly
+      </h1>
+      <Router>
+        <Link to="/home">HOME</Link>
+        <Switch>
+          <Route path="/home">
+            <form onSubmit={this.handleSubmit} className="search-form">
+              <input
+                type="text"
+                name="search-bar"
+                className="search-bar"
+                placeholder="Search for a book."
+                value={this.state.userInput}
+                onChange={this.handleChange}
+              />
+              <div>
+                <button type="submit" className="search-btn">
+                  Search
+                </button>
+                <LogoutButton logout={this.logout} />
+              </div>
+            </form>
+            <div className="list-div">
+              <ReadList
+                read={this.state.read}
+                user={this.state.user}
+                userInput={this.state.userInput}
+                shortened={this.state.shortened}
+              />
+              <CurrentReads
+                currentReads={this.state.currentReads}
+                user={this.state.user}
+                userInput={this.state.userInput}
+                shortened={this.state.shortened}
+              />
+            </div>
+          </Route>
+        </Switch>
+      </Router>
+      {/*this.state.opened && this.state.searching ? (
+              <Preview
+                itemTitle={this.state.itemTitle}
+                itemAuthor={this.state.itemAuthor}
+                itemImage={this.state.itemImage}
+                desc={this.state.itemDescription}
+                user={this.state.user}
+                goBack={this.goBack}
+                addToList={this.addToList}
+                items={this.state.items}
+            />*/ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,6 +100,7 @@ class App extends Component {
       IDs: [],
       currentReads: [],
       shortened: true,
+      currentPage: "",
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -64,6 +116,7 @@ class App extends Component {
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 
     this.logout = this.logout.bind(this);
+    this.goToShelves = this.goToShelves.bind(this);
 
     //this.addToList = this.addToList.bind(this);
     //this.setRating = this.setRating.bind(this);
@@ -218,14 +271,23 @@ class App extends Component {
     readRef.push(newPastRead);*/
   //}*/
 
+  goToShelves() {
+    this.setState({
+      currentPage: window.location.href,
+      shortened: false,
+    });
+  }
+
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user != null) {
         this.setState({
           user: user,
           loggedIn: true,
+          currentPage: window.location.href,
         });
-        console.log(user.email);
+
+        //console.log(user.email);
 
         const readRef = firebase
           .database()
@@ -271,87 +333,178 @@ class App extends Component {
   render() {
     return (
       <div>
-        {!this.state.loggedIn ? (
-          <form className="login-form">
-            <EmailForm handleEmail={this.handleEmail} />
-            <PasswordForm handlePassword={this.handlePassword} />
-            <SignupButton handleSignupSubmit={this.handleSignupSubmit} />
-            <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
-          </form>
-        ) : (
-          <div className="app" onLoad={this.updateRead}>
-            {/*<Router>
-          <Link to="/home">Home</Link>
-          <Switch>
-            <Route path="/home">
-              <Home userInput={this.state.userInput} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
-            </Route>
-          </Switch>
-
-          </Router>*/}
-            <h1 className="logo" onClick={this.goHome}>
-              Bookly
-            </h1>
-            <form onSubmit={this.handleSubmit} className="search-form">
-              <input
-                type="text"
-                name="search-bar"
-                className="search-bar"
-                placeholder="Search for a book."
-                value={this.state.userInput}
-                onChange={this.handleChange}
-              />
-              <div>
-                <button type="submit" className="search-btn">
-                  Search
-                </button>
-                <LogoutButton logout={this.logout} />
-              </div>
+        {
+          !this.state.loggedIn ? (
+            <form className="login-form">
+              <EmailForm handleEmail={this.handleEmail} />
+              <PasswordForm handlePassword={this.handlePassword} />
+              <SignupButton handleSignupSubmit={this.handleSignupSubmit} />
+              <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
             </form>
-            {this.state.opened && this.state.searching ? (
-              <Preview
-                itemTitle={this.state.itemTitle}
-                itemAuthor={this.state.itemAuthor}
-                itemImage={this.state.itemImage}
-                desc={this.state.itemDescription}
-                user={this.state.user}
-                goBack={this.goBack}
-                addToList={this.addToList}
-                items={this.state.items}
-              />
-            ) : this.state.ratingNow ? (
-              <h1>HELLO</h1>
-            ) : this.state.searching && !this.state.opened ? (
-              <SearchResults
-                items={this.state.items}
-                handleClick={this.handleClick}
-              />
-            ) : (
-              <div className="bookshelves">
-                <h2>Your bookshelves</h2>
-                <button type="button">View all</button>
-                <div className="list-div">
-                  <ReadList
-                    read={this.state.read}
-                    user={this.state.user}
-                    userInput={this.state.userInput}
-                    shortened={this.state.shortened}
-                  />
-                  <CurrentReads
-                    currentReads={this.state.currentReads}
-                    user={this.state.user}
-                    userInput={this.state.userInput}
-                    shortened={this.state.shortened}
-                  />
-                </div>
+          ) : window.location.href.includes("home") ? (
+            /*<div className="app" onLoad={this.updateRead}>*/
+            <div>
+              <h1 className="logo" onClick={this.goHome}>
+                Bookly
+              </h1>
+              <Router>
+                {/*<Link to="/home">HOME</Link>*/}
+                <Switch>
+                  <Route path="/home">
+                    <form onSubmit={this.handleSubmit} className="search-form">
+                      <input
+                        type="text"
+                        name="search-bar"
+                        className="search-bar"
+                        placeholder="Search for a book."
+                        value={this.state.userInput}
+                        onChange={this.handleChange}
+                      />
+                      <div>
+                        {/*console.log(window.location.href.includes("search?q="))*/}
+                        <button type="submit" className="search-btn">
+                          {/*<Link
+                          to={`/search?q=${this.state.userInput}`}
+                          className="search-link"
+                          onClick={this.handleSubmit}
+                        >*/}
+                          Search
+                          {/*</Link>*/}
+                        </button>
+                        <LogoutButton logout={this.logout} />
+                      </div>
+                    </form>
+                    {/*!this.state.opened && !this.state.searching ? (
+                    <div className="list-div">
+                      <ReadList
+                        read={this.state.read}
+                        user={this.state.user}
+                        userInput={this.state.userInput}
+                        shortened={this.state.shortened}
+                      />
+                      <CurrentReads
+                        currentReads={this.state.currentReads}
+                        user={this.state.user}
+                        userInput={this.state.userInput}
+                        shortened={this.state.shortened}
+                      />
+                    </div>
+                  ) : (
+                    console.log("Not opened or searching")
+                  )*/}
+                    {this.state.opened && this.state.searching ? (
+                      <Preview
+                        itemTitle={this.state.itemTitle}
+                        itemAuthor={this.state.itemAuthor}
+                        itemImage={this.state.itemImage}
+                        desc={this.state.itemDescription}
+                        user={this.state.user}
+                        goBack={this.goBack}
+                        addToList={this.addToList}
+                        items={this.state.items}
+                      />
+                    ) : !this.state.opened && this.state.searching ? (
+                      <SearchResults
+                        items={this.state.items}
+                        handleClick={this.handleClick}
+                      />
+                    ) : (
+                      <div className="bookshelves">
+                        <h2>Your bookshelves</h2>
+                        <Link to="/shelves" className="shelves-link">
+                          <button type="button" onClick={this.goToShelves}>
+                            View all
+                          </button>
+                        </Link>
+                        <div className="home-list-div">
+                          <ReadList
+                            read={this.state.read}
+                            user={this.state.user}
+                            userInput={this.state.userInput}
+                            shortened={this.state.shortened}
+                          />
+                          <CurrentReads
+                            currentReads={this.state.currentReads}
+                            user={this.state.user}
+                            userInput={this.state.userInput}
+                            shortened={this.state.shortened}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </Route>
+                </Switch>
+              </Router>
+            </div>
+          ) : window.location.href.includes("shelves") ? (
+            <div className="bookshelves">
+              <h2>Your bookshelves</h2>
+              <div className="shelves-list-div">
+                <ReadList
+                  read={this.state.read}
+                  user={this.state.user}
+                  userInput={this.state.userInput}
+                  shortened={false}
+                />
+                <CurrentReads
+                  currentReads={this.state.currentReads}
+                  user={this.state.user}
+                  userInput={this.state.userInput}
+                  shortened={false}
+                />
               </div>
-            )}
-            {/*<button type="submit">+</button>*/}
-          </div>
-        )}
+            </div>
+          ) : (
+            console.log("Not searching")
+          )
+          /*(!this.state.opened && this.state.searching) ||
+          window.location.href.includes("search?q=") ? (
+          <SearchResults
+            items={this.state.items}
+            handleClick={this.handleClick}
+          />
+        ) : (
+          console.log("Not searching")
+        )*/
+        }
       </div>
     );
   }
-}
-
-export default App;
+  /*:  } this.state.ratingNow ? ( <h1>HELLO</h1>) : this.state.searching && !this.state.opened ? (
+              <SearchResults
+                items={this.state.items}
+                handleClick={this.handleClick}
+              />) : (console.log("Not searching, not opened")) closingbrace*/
+  /*: !window.location.href.includes("home") ?
+                <Router>
+                <div className="bookshelves">
+                <h2>Your bookshelves</h2>
+                  <Link to="/shelves" className="shelves-link">
+                    <button type="button">View all</button>
+                  </Link>
+                  {/*<Link to="/home">Home</Link>*/
+} /*</div>
+                    ) : /*console.log("HELLO")*/ /*</Route>
+                  </Switch>
+                  </div>
+                </Router>
+            /*<button type="submit">+</button>*/ //} //}
+/*<Switch>
+                    <Route path="/shelves">
+                      <ReadList
+                        read={this.state.read}
+                        user={this.state.user}
+                        userInput={this.state.userInput}
+                        shortened={false}
+                      />
+                      <CurrentReads
+                        currentReads={this.state.currentReads}
+                        user={this.state.user}
+                        userInput={this.state.userInput}
+                        shortened={false}
+                      />
+                      {/*<Home
+                        userInput={this.state.userInput}
+                        onSubmit={this.handleSubmit}
+                        onChange={this.handleChange}
+                      />*/ export default App;
