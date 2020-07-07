@@ -445,7 +445,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                             read={this.state.read}
                             user={this.state.user}
                             userInput={this.state.userInput}
-                            shortened={this.state.shortened}
+                            shortened={true}
                             itemTitle={this.state.itemTitle}
                             itemAuthor={this.state.itemAuthor}
                             itemImage={this.state.itemImage}
@@ -454,7 +454,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                             currentReads={this.state.currentReads}
                             user={this.state.user}
                             userInput={this.state.userInput}
-                            shortened={this.state.shortened}
+                            shortened={true}
                             itemTitle={this.state.itemTitle}
                             itemAuthor={this.state.itemAuthor}
                             itemImage={this.state.itemImage}
@@ -468,6 +468,11 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
             </div>
           ) : window.location.href.includes("shelves") ? (
             <div className="bookshelves">
+              <Router>
+                <h1 className="logo" onClick={this.goHome}>
+                  <Link to="/home" className="no-show-link">Bookly</Link>
+                </h1>
+              </Router>
               <h2>Your bookshelves</h2>
               <div className="shelves-list-div">
                 <ReadList

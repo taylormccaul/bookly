@@ -324,6 +324,9 @@ export default class Preview extends Component {
             ) : (
               console.log("ERROR")
             )*/}
+            <select name="shelves" id="bookshelves">
+              {}
+            </select>
             <button
               type="button"
               onClick={() =>

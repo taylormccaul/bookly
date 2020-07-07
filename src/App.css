@@ -45,32 +45,30 @@
   margin-right: auto;
 }
 
-.home-read {
+.home-read, .shelves-read {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   padding: 1em;
   grid-gap: 3%;
   max-width: 100%;
-  /*max-height: 19.5em;*/
   margin-bottom: 1em;
-  overflow: hidden;
 }
 
-.shelves-read {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  padding: 1em;
-  box-sizing: border-box;
-  grid-gap: 3%;
-  width: 100%;
-  /*max-height: 19.5em;*/
-  margin-bottom: 1em;
+.home-read {
+  overflow: hidden;
 }
 
 .read-items {
   text-align: center;
   background-color: rgb(250, 250, 250);
   border-radius: 5px;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+.no-show-link {
+  color: black;
+  text-decoration: none;
 }
 
 .home-list-div {
