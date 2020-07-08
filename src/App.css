@@ -54,6 +54,14 @@
   margin-bottom: 1em;
 }
 
+.shelf-display {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(auto-fill);
+  padding: 1em;
+  grid-gap: 3%;
+}
+
 .home-read {
   overflow: hidden;
 }
@@ -104,6 +112,11 @@
 h2 {
   text-align: center;
   font-family: "Rubik", Helvetica, sans-serif;
+}
+
+.book-display {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
 }
 
 .book-title {

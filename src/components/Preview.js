@@ -50,7 +50,6 @@ export default class Preview extends Component {
       itemImage: this.props.itemImage,
       itemDesc: this.props.itemDesc,
       items: this.props.items,
-      ratedYet: false,
       shelvesList: {},
     };
   }
@@ -103,6 +102,7 @@ export default class Preview extends Component {
           title: this.state.itemTitle,
           author: this.state.itemAuthor,
           image: this.state.itemImage,
+          description: this.state.itemDesc,
           rating: this.state.rating,
           ratedYet: this.state.ratedYet,
           dateAdded: dateAdded, 
@@ -193,6 +193,7 @@ export default class Preview extends Component {
       title: this.state.itemTitle,
       author: this.state.itemAuthor,
       image: this.state.itemImage,
+      description: this.state.itemDesc,
       rating: this.state.rating,
       ratedYet: true,
       dateAdded: dateAdded,
@@ -434,7 +435,7 @@ export default class Preview extends Component {
             </button>
           </div>
           <div className="desc">
-            <p>{this.props.desc}</p>
+            <p>{this.state.itemDesc}</p>
           </div>
         </div>
       </div>

@@ -119,20 +119,41 @@ class ReadList extends React.Component {
             </div>
           </div>
         ) : (
-          <div className="past-reads-div">
+          <div className={"chosen-shelf-display" /*"past-reads-div"*/}>
             <div className="read-header">
               <h2>Your past reads</h2>
               {/*<button type="button">View all</button>*/}
             </div>
-            <div className="shelves-read">
+            <div className="shelf-display">
               {this.state.read.map((item, index) => {
+                //console.log(this.state.read[index]);
+                var periodStop = this.state.read[index].id.description.indexOf(
+                  ".",
+                  250
+                );
+
+                var questionStop = this.state.read[
+                  index
+                ].id.description.indexOf("?", 250);
+
+                var exclamationStop = this.state.read[
+                  index
+                ].id.description.indexOf("!", 250);
+
+                /*var questionStop = this.state.read[
+                  index
+                ].id.description.substring(
+                  0,
+                  this.state.read[index].id.description.indexOf("?", 250) + 1
+                );*/
+
                 return (
                   <div
-                    className="read-items"
+                    className="book-display"
                     key={index}
                     onClick={() => this.deleteBook(this.state.read[index].key)}
                   >
-                    <div className="book-display">
+                    <div className="read-items">
                       <p className="book-title">
                         {this.state.read[index].id.title}
                       </p>
@@ -146,9 +167,34 @@ class ReadList extends React.Component {
                       />
                     </div>
                     <div className="book-info">
-                      <p className="book-desc">
-                        {this.state.read[index].id.description}
-                      </p>
+                      {/*console.log(/\.|!|\?/g.exec(this.state.read[index].id.description).index)*/}
+                      {periodStop < questionStop &&
+                      periodStop < exclamationStop || questionStop === -1 || exclamationStop === -1 ? (
+                        <p className="book-desc">
+                          {this.state.read[index].id.description.substring(
+                            0,
+                            periodStop + 1
+                          )}
+                        </p>
+                      ) : questionStop < periodStop &&
+                        questionStop < exclamationStop || periodStop === -1 || exclamationStop === -1 ? (
+                        <p className="book-desc">
+                          {this.state.read[index].id.description.substring(
+                            0,
+                            questionStop + 1
+                          )}
+                        </p>
+                      ) : exclamationStop < periodStop &&
+                        exclamationStop < questionStop || periodStop === -1 || questionStop === -1 ? (
+                        <p className="book-desc">
+                          {this.state.read[index].id.description.substring(
+                            0,
+                            exclamationStop + 1
+                          )}
+                        </p>
+                      ) : (
+                        <p className="book-desc">No description</p>
+                      )}
                     </div>
                   </div>
                 );
