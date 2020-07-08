@@ -4,7 +4,7 @@ import axios from "axios";
 
 //import Logo from "./components/Logo";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 
 import firebase from "./firebase.js";
 import Preview from "./components/Preview";
@@ -374,7 +374,12 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
               <SignupButton handleSignupSubmit={this.handleSignupSubmit} />
               <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
             </form>
-          ) : window.location.href.includes("home") ? (
+          ) : window.location.href === "http://localhost:3000/" && this.state.user != null ? (
+            <Router>
+              <Redirect to="/home" />
+            </Router>
+          )
+          : window.location.href.includes("home") ? (
             /*<div className="app" onLoad={this.updateRead}>*/
             <div>
               <h1 className="logo" onClick={this.goHome}>
