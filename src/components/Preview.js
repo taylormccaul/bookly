@@ -3,6 +3,31 @@ import firebase from "../firebase.js";
 
 import RatingsDisplay from "./RatingsDisplay";
 
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
 export default class Preview extends Component {
   _isMounted = false;
 
@@ -26,6 +51,7 @@ export default class Preview extends Component {
       itemDesc: this.props.itemDesc,
       items: this.props.items,
       ratedYet: false,
+      shelvesList: {},
     };
   }
 
@@ -40,15 +66,38 @@ export default class Preview extends Component {
     if (this._isMounted) {
       //e.preventDefault();
       if (
-        ref.path.pieces_[2] ===
-        firebase.database().ref(`/users/${this.state.user.uid}/readList`).path
-          .pieces_[2]
+        ref.path.pieces_[3] ===
+        firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/shelves/readList`).path.pieces_[3]
       ) {
         this.setState({
           ratingNow: true,
           doneRating: false,
         });
       } else {
+        var newDate = new Date(Date.now());
+
+        var pmOrAm = "";
+        var minutes = "";
+
+        if (newDate.getHours() > 12 && newDate.getHours() < 24) {
+          pmOrAm = "pm";
+        } else {
+          pmOrAm = "am";
+        }
+
+        if (newDate.getMinutes() < 10) {
+          minutes = `0${newDate.getMinutes()}`;
+        } else {
+          minutes = newDate.getMinutes();
+        }
+
+        var dateAdded = `${days[newDate.getDay()]}, ${
+          months[newDate.getMonth()]
+        } ${newDate.getDate()}, ${newDate.getFullYear()}, ${
+          newDate.getHours() - 12
+        }:${minutes}${pmOrAm}`;
         //console.log(ref.path.pieces_);
         const newItem = {
           title: this.state.itemTitle,
@@ -56,6 +105,7 @@ export default class Preview extends Component {
           image: this.state.itemImage,
           rating: this.state.rating,
           ratedYet: this.state.ratedYet,
+          dateAdded: dateAdded, 
           id: Date.now(),
         };
 
@@ -80,12 +130,12 @@ export default class Preview extends Component {
   componentDidMount() {
     firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/readList`)
+      .ref(`/users/${this.state.user.uid}/shelves/readList`)
       .on("value", (snapshot) => {
         for (let item in snapshot.val()) {
           firebase
             .database()
-            .ref(`/users/${this.state.user.uid}/readList/${item}`)
+            .ref(`/users/${this.state.user.uid}/shelves/readList/${item}`)
             .on("value", (snapshot) => {
               if (snapshot.val() != null) {
                 if (snapshot.val().title === this.state.itemTitle) {
@@ -100,6 +150,15 @@ export default class Preview extends Component {
             });
         }
       });
+
+    firebase
+      .database()
+      .ref(`/users/${this.state.user.uid}/shelves`)
+      .on("value", (snapshot) => {
+        this.setState({
+          shelvesList: Object.assign(this.state.shelvesList, snapshot.val()),
+        });
+      });
   }
 
   finishRating = (ref) => {
@@ -107,12 +166,36 @@ export default class Preview extends Component {
       `Book '${this.props.itemTitle}' has been rated ${this.state.rating} stars.`
     );
 
+    var newDate = new Date(Date.now());
+
+    var pmOrAm = "";
+    var minutes = ""
+
+    if (newDate.getHours() > 12 && newDate.getHours() < 24) {
+      pmOrAm = "pm";
+    } else {
+      pmOrAm = "am";
+    }
+
+    if (newDate.getMinutes() < 10) {
+      minutes = `0${newDate.getMinutes()}`;
+    } else {
+      minutes = newDate.getMinutes();
+    }
+
+    var dateAdded = `${days[newDate.getDay()]}, ${
+      months[newDate.getMonth()]
+    } ${newDate.getDate()}, ${newDate.getFullYear()}, ${
+      newDate.getHours() - 12
+    }:${minutes}${pmOrAm}`;
+
     const newItem = {
       title: this.state.itemTitle,
       author: this.state.itemAuthor,
       image: this.state.itemImage,
       rating: this.state.rating,
       ratedYet: true,
+      dateAdded: dateAdded,
       id: Date.now(),
     };
 
@@ -132,7 +215,7 @@ export default class Preview extends Component {
           rating: 1,
         });
 
-        console.log(this.state.one);
+        //console.log(this.state.one);
 
         if (this.state.one === true) {
           this.setState({
@@ -324,16 +407,14 @@ export default class Preview extends Component {
             ) : (
               console.log("ERROR")
             )*/}
-            <select name="shelves" id="bookshelves">
-              {}
-            </select>
+            <select name="shelves" id="bookshelves"></select>
             <button
               type="button"
               onClick={() =>
                 this.addToList(
                   firebase
                     .database()
-                    .ref(`/users/${this.state.user.uid}/currentReads`)
+                    .ref(`/users/${this.state.user.uid}/shelves/currentReads`)
                 )
               }
             >
@@ -345,7 +426,7 @@ export default class Preview extends Component {
                 this.addToList(
                   firebase
                     .database()
-                    .ref(`/users/${this.state.user.uid}/readList`)
+                    .ref(`/users/${this.state.user.uid}/shelves/readList`)
                 )
               }
             >
@@ -427,7 +508,9 @@ export default class Preview extends Component {
         <button
           onClick={() =>
             this.finishRating(
-              firebase.database().ref(`/users/${this.state.user.uid}/readList`)
+              firebase
+                .database()
+                .ref(`/users/${this.state.user.uid}/shelves/readList`)
             )
           }
         >

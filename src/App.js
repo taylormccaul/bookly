@@ -289,15 +289,24 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
           currentPage: window.location.href,
         });
 
+        //console.log(newDate.toLocaleString());
+
         //console.log(user.email);
+
+        firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/shelves`)
+          .on("value", (snapshot) => {
+            console.log(snapshot.val());
+          });
 
         const readRef = firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/readList`);
+          .ref(`/users/${this.state.user.uid}/shelves/readList`);
 
         const currentReadsRef = firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/currentReads`);
+          .ref(`/users/${this.state.user.uid}/shelves/currentReads`);
 
         readRef.on("value", (snapshot) => {
           let readList = snapshot.val();
@@ -470,10 +479,12 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
             <div className="bookshelves">
               <Router>
                 <h1 className="logo" onClick={this.goHome}>
-                  <Link to="/home" className="no-show-link">Bookly</Link>
+                  <Link to="/home" className="no-show-link">
+                    Bookly
+                  </Link>
                 </h1>
               </Router>
-              <h2>Your bookshelves</h2>
+              <h2 className="title-header">Your bookshelves</h2>
               <div className="shelves-list-div">
                 <ReadList
                   read={this.state.read}
@@ -484,7 +495,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                   itemAuthor={this.state.itemAuthor}
                   itemImage={this.state.itemImage}
                 />
-                <CurrentReads
+                {/*<CurrentReads
                   currentReads={this.state.currentReads}
                   user={this.state.user}
                   userInput={this.state.userInput}
@@ -492,7 +503,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                   itemTitle={this.state.itemTitle}
                   itemAuthor={this.state.itemAuthor}
                   itemImage={this.state.itemImage}
-                />
+                />*/}
               </div>
             </div>
           ) : (

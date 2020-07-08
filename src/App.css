@@ -58,6 +58,10 @@
   overflow: hidden;
 }
 
+.title-header {
+  font-size: 2.1em;
+}
+
 .read-items {
   text-align: center;
   background-color: rgb(250, 250, 250);

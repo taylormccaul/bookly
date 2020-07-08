@@ -27,7 +27,7 @@ class ReadList extends React.Component {
   deleteBook(book) {
     const bookRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/readList/${book}`);
+      .ref(`/users/${this.state.user.uid}/shelves/readList/${book}`);
 
     bookRef.remove();
   }
@@ -37,7 +37,7 @@ class ReadList extends React.Component {
 
     const readRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/readList`);
+      .ref(`/users/${this.state.user.uid}/shelves/readList`);
 
     readRef.on("value", (snapshot) => {
       let readList = snapshot.val();
@@ -122,7 +122,7 @@ class ReadList extends React.Component {
           <div className="past-reads-div">
             <div className="read-header">
               <h2>Your past reads</h2>
-              <button type="button">View all</button>
+              {/*<button type="button">View all</button>*/}
             </div>
             <div className="shelves-read">
               {this.state.read.map((item, index) => {
@@ -132,17 +132,24 @@ class ReadList extends React.Component {
                     key={index}
                     onClick={() => this.deleteBook(this.state.read[index].key)}
                   >
-                    <p className="book-title">
-                      {this.state.read[index].id.title}
-                    </p>
-                    <img src={this.state.read[index].id.image} alt="" />
-                    <p className="book-author">
-                      {this.state.read[index].id.author[0]}
-                    </p>
-                    <RatingsDisplay
-                      rating={this.state.read[index].id.rating}
-                      ratedYet={this.state.read[index].id.ratedYet}
-                    />
+                    <div className="book-display">
+                      <p className="book-title">
+                        {this.state.read[index].id.title}
+                      </p>
+                      <img src={this.state.read[index].id.image} alt="" />
+                      <p className="book-author">
+                        {this.state.read[index].id.author[0]}
+                      </p>
+                      <RatingsDisplay
+                        rating={this.state.read[index].id.rating}
+                        ratedYet={this.state.read[index].id.ratedYet}
+                      />
+                    </div>
+                    <div className="book-info">
+                      <p className="book-desc">
+                        {this.state.read[index].id.description}
+                      </p>
+                    </div>
                   </div>
                 );
               })}

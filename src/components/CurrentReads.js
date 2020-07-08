@@ -27,7 +27,7 @@ export default class CurrentReads extends Component {
   deleteBook(book) {
     const bookRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/currentReads/${book}`);
+      .ref(`/users/${this.state.user.uid}/shelves/currentReads/${book}`);
 
     bookRef.remove();
   }
@@ -37,7 +37,7 @@ export default class CurrentReads extends Component {
 
     const currentReadsRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/currentReads`);
+      .ref(`/users/${this.state.user.uid}/shelves/currentReads`);
 
     currentReadsRef.on("value", (snapshot) => {
       let currentReads = snapshot.val();
