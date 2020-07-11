@@ -27,7 +27,7 @@ export default class CurrentReads extends Component {
   deleteBook(book) {
     const bookRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/shelves/currentReads/${book}`);
+      .ref(`/users/${this.state.user.uid}/shelves/current-reads/${book}`);
 
     bookRef.remove();
   }
@@ -37,7 +37,7 @@ export default class CurrentReads extends Component {
 
     const currentReadsRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/shelves/currentReads`);
+      .ref(`/users/${this.state.user.uid}/shelves/current-reads`);
 
     currentReadsRef.on("value", (snapshot) => {
       let currentReads = snapshot.val();
@@ -63,12 +63,12 @@ export default class CurrentReads extends Component {
 
     /*firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/currentReads`)
+      .ref(`/users/${this.state.user.uid}/current-reads`)
       .on("value", (snapshot) => {
         for (let item in snapshot.val()) {
           firebase
             .database()
-            .ref(`/users/${this.state.user.uid}/currentReads/${item}`)
+            .ref(`/users/${this.state.user.uid}/current-reads/${item}`)
             .on("value", (snapshot) => {
               for (let index in this.state.bookIDs) {
                 if (snapshot.val().title === this.state.bookIDs[index].id.title) {

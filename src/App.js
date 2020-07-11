@@ -4,7 +4,13 @@ import axios from "axios";
 
 //import Logo from "./components/Logo";
 
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
 
 import firebase from "./firebase.js";
 import Preview from "./components/Preview";
@@ -103,6 +109,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
       currentPage: "",
       rating: null,
       ratedYet: false,
+      shelvesList: [],
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -127,15 +134,17 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
   handleSubmit(e) {
     e.preventDefault();
 
-    axios
-      .get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
-      .then((data) => {
-        this.setState({
-          items: [...data.data.items],
-          opened: false,
-          searching: true,
+    if (this._isMounted === true) {
+      axios
+        .get(`${API_URL}?q=${this.state.userInput}&maxResults=15`)
+        .then((data) => {
+          this.setState({
+            items: [...data.data.items],
+            opened: false,
+            searching: true,
+          });
         });
-      });
+    }
   }
 
   handleChange(e) {
@@ -281,6 +290,8 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
   }
 
   componentDidMount() {
+    this._isMounted = true;
+
     firebase.auth().onAuthStateChanged((user) => {
       if (user != null) {
         this.setState({
@@ -293,20 +304,38 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
 
         //console.log(user.email);
 
+        const readRef = firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/shelves/read-list`);
+
+        const currentReadsRef = firebase
+          .database()
+          .ref(`/users/${this.state.user.uid}/shelves/current-reads`);
+
         firebase
           .database()
           .ref(`/users/${this.state.user.uid}/shelves`)
           .on("value", (snapshot) => {
-            console.log(snapshot.val());
+            const shelvesList = Object.keys(snapshot.val());
+            let newArr = [];
+            for (let shelf in shelvesList) {
+              var shelfFormat = shelvesList[shelf].split("-");
+              newArr = [];
+              for (let word in shelfFormat) {
+                newArr.push(
+                  shelfFormat[word][0].toUpperCase() +
+                    shelfFormat[word].substring(1, shelfFormat[word].length)
+                );
+              }
+
+              let finishedArr = newArr.join(" ");
+              this.setState({
+                shelvesList: this.state.shelvesList.concat(finishedArr),
+              });
+            }
+            //console.log(this.state.shelvesList)
+            //console.log(shelvesList[0].split(/[A-Z]/));
           });
-
-        const readRef = firebase
-          .database()
-          .ref(`/users/${this.state.user.uid}/shelves/readList`);
-
-        const currentReadsRef = firebase
-          .database()
-          .ref(`/users/${this.state.user.uid}/shelves/currentReads`);
 
         readRef.on("value", (snapshot) => {
           let readList = snapshot.val();
@@ -363,6 +392,10 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
     });
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   render() {
     return (
       <div>
@@ -374,12 +407,12 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
               <SignupButton handleSignupSubmit={this.handleSignupSubmit} />
               <LoginButton handleLoginSubmit={this.handleLoginSubmit} />
             </form>
-          ) : window.location.href === "http://localhost:3000/" && this.state.user != null ? (
+          ) : window.location.href === "http://localhost:3000/" &&
+            this.state.user != null ? (
             <Router>
               <Redirect to="/home" />
             </Router>
-          )
-          : window.location.href.includes("home") ? (
+          ) : window.location.href.includes("home") ? (
             /*<div className="app" onLoad={this.updateRead}>*/
             <div>
               <h1 className="logo" onClick={this.goHome}>
@@ -440,6 +473,7 @@ const API_URL = `https://www.googleapis.com/books/v1/volumes`; /*}
                         goBack={this.goBack}
                         addToList={this.addToList}
                         items={this.state.items}
+                        shelvesList={this.state.shelvesList}
                       />
                     ) : !this.state.opened && this.state.searching ? (
                       <SearchResults

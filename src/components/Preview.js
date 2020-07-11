@@ -29,8 +29,6 @@ const days = [
 ];
 
 export default class Preview extends Component {
-  _isMounted = false;
-
   constructor(props) {
     super(props);
 
@@ -50,8 +48,10 @@ export default class Preview extends Component {
       itemImage: this.props.itemImage,
       itemDesc: this.props.itemDesc,
       items: this.props.items,
-      shelvesList: {},
+      shelvesList: this.props.shelvesList,
     };
+
+    this.selectShelf = this.selectShelf.bind(this);
   }
 
   goBack = () => {
@@ -61,14 +61,14 @@ export default class Preview extends Component {
   addToList = (ref) => {
     //this.props.startRating();
 
-    this._isMounted = true;
-    if (this._isMounted) {
+    if (this._isMounted === true) {
       //e.preventDefault();
       if (
         ref.path.pieces_[3] ===
         firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/shelves/readList`).path.pieces_[3]
+          .ref(`/users/${this.state.user.uid}/shelves/read-list`).path
+          .pieces_[3]
       ) {
         this.setState({
           ratingNow: true,
@@ -105,7 +105,7 @@ export default class Preview extends Component {
           description: this.state.itemDesc,
           rating: this.state.rating,
           ratedYet: this.state.ratedYet,
-          dateAdded: dateAdded, 
+          dateAdded: dateAdded,
           id: Date.now(),
         };
 
@@ -114,7 +114,7 @@ export default class Preview extends Component {
 
       /*const readRef = firebase
           .database()
-          .ref(`/users/${this.state.user.uid}/readList`);
+          .ref(`/users/${this.state.user.uid}/read-list`);
     
         const newPastRead = {
           title: this.state.itemTitle,
@@ -128,14 +128,16 @@ export default class Preview extends Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
+
     firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/shelves/readList`)
+      .ref(`/users/${this.state.user.uid}/shelves/read-list`)
       .on("value", (snapshot) => {
         for (let item in snapshot.val()) {
           firebase
             .database()
-            .ref(`/users/${this.state.user.uid}/shelves/readList/${item}`)
+            .ref(`/users/${this.state.user.uid}/shelves/read-list/${item}`)
             .on("value", (snapshot) => {
               if (snapshot.val() != null) {
                 if (snapshot.val().title === this.state.itemTitle) {
@@ -151,14 +153,23 @@ export default class Preview extends Component {
         }
       });
 
-    firebase
+    /*firebase
       .database()
       .ref(`/users/${this.state.user.uid}/shelves`)
       .on("value", (snapshot) => {
-        this.setState({
-          shelvesList: Object.assign(this.state.shelvesList, snapshot.val()),
-        });
+        if (snapshot.val() !== null) {
+          this.setState({
+            shelvesList: Object.assign(
+              this.state.shelvesList,
+              Object.keys(snapshot.val())
+            ),
+          });
+        }
       });
+
+    if (this.state.shelvesList !== null) {
+      console.log(this.state.shelvesList);
+    }*/
   }
 
   finishRating = (ref) => {
@@ -169,7 +180,7 @@ export default class Preview extends Component {
     var newDate = new Date(Date.now());
 
     var pmOrAm = "";
-    var minutes = ""
+    var minutes = "";
 
     if (newDate.getHours() > 12 && newDate.getHours() < 24) {
       pmOrAm = "pm";
@@ -338,6 +349,14 @@ export default class Preview extends Component {
     }
   };
 
+  selectShelf(e) {
+    console.log(e.target.value);
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   render() {
     //console.log(this.state.ratingNow);
     /*for (let i = 0; i < 5; i++) {
@@ -408,14 +427,23 @@ export default class Preview extends Component {
             ) : (
               console.log("ERROR")
             )*/}
-            <select name="shelves" id="bookshelves"></select>
+            <select name="shelves" id="bookshelves" onChange={this.selectShelf}>
+              {this.state.shelvesList.map((item, index) => {
+                return (
+                  <option value={this.state.shelvesList[index]} key={`shelf-${this.state.shelvesList[index]}`}>
+                    {this.state.shelvesList[index]}
+                  </option>
+                );
+              })}
+              <option value="add-new">Add new shelf</option>
+            </select>
             <button
               type="button"
               onClick={() =>
                 this.addToList(
                   firebase
                     .database()
-                    .ref(`/users/${this.state.user.uid}/shelves/currentReads`)
+                    .ref(`/users/${this.state.user.uid}/shelves/current-reads`)
                 )
               }
             >
@@ -427,7 +455,7 @@ export default class Preview extends Component {
                 this.addToList(
                   firebase
                     .database()
-                    .ref(`/users/${this.state.user.uid}/shelves/readList`)
+                    .ref(`/users/${this.state.user.uid}/shelves/read-list`)
                 )
               }
             >
@@ -511,7 +539,7 @@ export default class Preview extends Component {
             this.finishRating(
               firebase
                 .database()
-                .ref(`/users/${this.state.user.uid}/shelves/readList`)
+                .ref(`/users/${this.state.user.uid}/shelves/read-list`)
             )
           }
         >

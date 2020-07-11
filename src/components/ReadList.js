@@ -27,7 +27,7 @@ class ReadList extends React.Component {
   deleteBook(book) {
     const bookRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/shelves/readList/${book}`);
+      .ref(`/users/${this.state.user.uid}/shelves/read-list/${book}`);
 
     bookRef.remove();
   }
@@ -37,7 +37,7 @@ class ReadList extends React.Component {
 
     const readRef = firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/shelves/readList`);
+      .ref(`/users/${this.state.user.uid}/shelves/read-list`);
 
     readRef.on("value", (snapshot) => {
       let readList = snapshot.val();
@@ -59,16 +59,21 @@ class ReadList extends React.Component {
           read: [...newState],
         });
       }
+
+      /*firebase.database().ref(`/users/${this.state.user.uid}/shelves`).on("value", (snapshot) => {
+        firebase.database().ref(`/users/${this.state.user.uid}/shelves/`)
+        console.log(snapshot.val())
+      });*/
     });
 
     /*firebase
       .database()
-      .ref(`/users/${this.state.user.uid}/readList`)
+      .ref(`/users/${this.state.user.uid}/read-list`)
       .on("value", (snapshot) => {
         for (let item in snapshot.val()) {
           firebase
             .database()
-            .ref(`/users/${this.state.user.uid}/readList/${item}`)
+            .ref(`/users/${this.state.user.uid}/read-list/${item}`)
             .on("value", (snapshot) => {
               for (let index in this.state.bookIDs) {
                 console.log(snapshot.val())
@@ -153,11 +158,11 @@ class ReadList extends React.Component {
                     key={index}
                     onClick={() => this.deleteBook(this.state.read[index].key)}
                   >
-                    <div className="read-items">
+                    {/*<div className="read-items">*/}
+                    <img src={this.state.read[index].id.image} alt="" />
                       <p className="book-title">
                         {this.state.read[index].id.title}
                       </p>
-                      <img src={this.state.read[index].id.image} alt="" />
                       <p className="book-author">
                         {this.state.read[index].id.author[0]}
                       </p>
@@ -165,10 +170,10 @@ class ReadList extends React.Component {
                         rating={this.state.read[index].id.rating}
                         ratedYet={this.state.read[index].id.ratedYet}
                       />
-                    </div>
+                    {/*</div>*/}
                     <div className="book-info">
                       {/*console.log(/\.|!|\?/g.exec(this.state.read[index].id.description).index)*/}
-                      {periodStop < questionStop &&
+                      {/*periodStop < questionStop &&
                       periodStop < exclamationStop || questionStop === -1 || exclamationStop === -1 ? (
                         <p className="book-desc">
                           {this.state.read[index].id.description.substring(
@@ -194,7 +199,7 @@ class ReadList extends React.Component {
                         </p>
                       ) : (
                         <p className="book-desc">No description</p>
-                      )}
+                      )*/}
                     </div>
                   </div>
                 );
